@@ -1,0 +1,21 @@
+グローバルUオンラインマルシェ案内 — 保存・復元メモ（cursol ルート）
+
+■ Git で戻す（推奨）
+  git log --oneline -5
+  git tag -l
+  # マルシェ用ファイルだけタグ時点に戻す例:
+  git checkout v1-marche-baseline -- global-u-online-marche.html images/marche-online-gallery.png
+  # 作業ツリー全体を最後のコミットに戻す（未コミット変更を捨てる）:
+  git restore .
+  # または: git reset --hard HEAD
+
+■ 依頼の区切り方
+  変更前: git add -A && git commit -m "説明"
+  実験したいとき: git checkout -b try/機能名
+
+■ 日付付きコピーから戻す（Git なし）
+  cp global-u-online-marche.2026-04-12-baseline.html global-u-online-marche.html
+  cp images/marche-online-gallery.2026-04-12-baseline.png images/marche-online-gallery.png
+
+■ Surge
+  ホスティングは上書きのため、戻すときはローカルを復元してから再デプロイしてください。

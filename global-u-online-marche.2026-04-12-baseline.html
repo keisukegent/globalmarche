@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>グローバルUオンラインマルシェ | ユーワード会員向け案内</title>
+  <meta name="description" content="グローバルUオンラインマルシェとは？出店条件、参加フロー、年間スケジュールを分かりやすく整理した案内ページです。" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            /* HORBY / ユーワード系（u-word.com/horby の Ionic 変数に準拠） */
+            horby: {
+              page: '#f4f5f8',
+              panel: '#ffffff',
+              ink: '#373737',
+              sub: '#5c5c5c',
+              line: '#e4e4e8',
+              cyan: '#0cd1e8',
+              cyanDark: '#0aa3bc',
+              violet: '#7044ff',
+              violetSoft: '#ede9fe',
+              violetDark: '#5a32d4',
+            },
+          },
+          fontFamily: {
+            sans: ['"Noto Sans JP"', 'system-ui', 'sans-serif'],
+            jp: ['"Noto Sans JP"', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            soft: '0 20px 50px -28px rgba(55, 55, 55, 0.12)',
+            card: '0 10px 28px -16px rgba(55, 55, 55, 0.1)',
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Noto Sans JP', system-ui, sans-serif; }
+    .icon-inline svg { width: 1.15em; height: 1.15em; vertical-align: -0.2em; }
+    .flow-scroll {
+      -webkit-overflow-scrolling: touch;
+      scrollbar-color: #0cd1e8 #eef8fa;
+      scrollbar-width: thin;
+    }
+    .flow-scroll::-webkit-scrollbar { height: 8px; }
+    .flow-scroll::-webkit-scrollbar-thumb {
+      background: linear-gradient(90deg, #0cd1e8, #7044ff);
+      border-radius: 999px;
+    }
+    .timeline-line::before {
+      content: '';
+      position: absolute;
+      left: 1.15rem;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, #0cd1e8, #5ecfff, #7044ff);
+      border-radius: 999px;
+    }
+    .horby-hero-accent {
+      background: linear-gradient(90deg, #0cd1e8 0%, #7044ff 100%);
+    }
+    .marche-illus-stall {
+      filter: drop-shadow(0 8px 16px rgba(112, 68, 255, 0.12));
+    }
+  </style>
+</head>
+<body class="bg-horby-page text-horby-ink antialiased">
+  <!-- Header（HORBY系：明るいグレー背景・チャコール＋シアン／バイオレット差し色） -->
+  <header class="sticky top-0 z-40 border-b border-horby-line bg-white/95 backdrop-blur-md shadow-sm">
+    <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
+      <div class="flex items-center gap-2">
+        <span class="icon-inline flex h-10 w-10 items-center justify-center rounded-2xl border border-horby-line bg-gradient-to-br from-cyan-50 to-violet-50 text-horby-violet shadow-sm" data-lucide="store"></span>
+        <div>
+          <p class="text-[11px] font-semibold tracking-wide text-horby-cyanDark sm:text-xs">ユーワード会員さん必見</p>
+          <h1 class="text-base font-bold leading-tight text-horby-ink sm:text-lg">グローバルUオンラインマルシェ</h1>
+        </div>
+      </div>
+      <nav class="flex flex-wrap items-center gap-2 text-xs font-medium text-horby-sub sm:text-sm">
+        <a class="rounded-full px-3 py-1 hover:bg-cyan-50/90 hover:text-horby-violet" href="#rules">条件</a>
+        <a class="rounded-full px-3 py-1 hover:bg-cyan-50/90 hover:text-horby-violet" href="#flow">参加フロー</a>
+        <a class="rounded-full px-3 py-1 hover:bg-cyan-50/90 hover:text-horby-violet" href="#year">年間</a>
+        <a class="rounded-full px-3 py-1 hover:bg-cyan-50/90 hover:text-horby-violet" href="#day">当日</a>
+        <a class="rounded-full px-3 py-1 hover:bg-cyan-50/90 hover:text-horby-violet" href="#gallery">写真</a>
+        <a class="rounded-full px-3 py-1 hover:bg-cyan-50/90 hover:text-horby-violet" href="#faq">Q&amp;A</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-6xl px-4 pb-20 pt-8 text-horby-ink sm:px-6">
+    <!-- Hero（参考: https://u-word.com/horby のトーン） -->
+    <section id="hero" class="relative overflow-hidden rounded-[2rem] border border-horby-line bg-horby-panel p-6 shadow-soft sm:p-10">
+      <div class="horby-hero-accent absolute left-0 right-0 top-0 h-1 rounded-t-[2rem]"></div>
+      <div class="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-cyan-200/25 blur-3xl"></div>
+      <div class="pointer-events-none absolute -bottom-24 -left-16 h-56 w-56 rounded-full bg-violet-200/20 blur-3xl"></div>
+      <div class="relative pt-1">
+        <p class="mb-3 inline-flex items-center gap-2 rounded-full border border-horby-line bg-horby-page px-3 py-1.5 text-xs font-semibold text-horby-ink shadow-sm">
+          <span class="icon-inline text-horby-cyan" data-lucide="sparkles"></span>
+          すべての参加者にメリットがある「三方良し」
+        </p>
+        <h2 class="text-2xl font-bold leading-snug tracking-tight text-horby-ink sm:text-3xl md:text-4xl">
+          グローバルUオンラインマルシェとは？
+        </h2>
+        <p class="mt-2 max-w-2xl text-sm font-medium leading-relaxed text-horby-cyanDark sm:text-base">
+          すべての参加者にメリットがある「三方良し」を、オンラインの「市場」で実現するユーワード会員向けの出店・交流プログラムです。
+        </p>
+        <p class="mt-3 max-w-2xl text-sm leading-relaxed text-horby-sub sm:text-base">
+          出店者・お客様・コミュニティがともに笑顔になれる場づくりを目指します。認知 → 体験 → ご縁の3ステップで、継続的な関係へつなげましょう。
+        </p>
+
+        <div class="mt-8 grid gap-4 sm:grid-cols-3">
+          <article class="group rounded-2xl border border-horby-line bg-horby-page/80 p-5 shadow-card transition hover:-translate-y-0.5 hover:border-cyan-200/80 hover:shadow-lg">
+            <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-100 text-horby-cyanDark">
+              <span data-lucide="eye"></span>
+            </div>
+            <h3 class="text-lg font-bold text-horby-ink">1. 知ってもらう</h3>
+            <p class="mt-2 text-sm leading-relaxed text-horby-sub">お店と自分を認知してもらい、まずは「知る」入口を広げます。</p>
+          </article>
+          <article class="group rounded-2xl border border-horby-line bg-horby-page/80 p-5 shadow-card transition hover:-translate-y-0.5 hover:border-violet-200/80 hover:shadow-lg">
+            <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-horby-violetSoft text-horby-violet">
+              <span data-lucide="hand-heart"></span>
+            </div>
+            <h3 class="text-lg font-bold text-horby-ink">2. 体験してもらう</h3>
+            <p class="mt-2 text-sm leading-relaxed text-horby-sub">フルポイント商品でサービスを体験してもらい、価値を実感してもらいます。</p>
+          </article>
+          <article class="group rounded-2xl border border-horby-line bg-horby-page/80 p-5 shadow-card transition hover:-translate-y-0.5 hover:border-violet-300/80 hover:shadow-lg">
+            <div class="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-violet-100 text-horby-violetDark">
+              <span data-lucide="link-2"></span>
+            </div>
+            <h3 class="text-lg font-bold text-horby-ink">3. 繋がってもらう</h3>
+            <p class="mt-2 text-sm leading-relaxed text-horby-sub">信頼を築き、継続的なご縁（リピーター）へつなげます。</p>
+          </article>
+        </div>
+        <!-- 装飾イラスト：屋台（ヒーロー） -->
+        <div class="marche-illus-stall pointer-events-none absolute bottom-4 right-2 hidden opacity-90 sm:block sm:bottom-6 sm:right-4" aria-hidden="true">
+          <svg width="88" height="76" viewBox="0 0 88 76" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="52" width="72" height="18" rx="3" fill="#ede9fe" stroke="#7044ff" stroke-width="1.3"/>
+            <path d="M6 52L44 18l38 34" fill="#dff8fc" stroke="#0cd1e8" stroke-width="1.3" stroke-linejoin="round"/>
+            <path d="M16 52l8-22M32 52l8-22M48 52l8-22M64 52l8-22" stroke="#7044ff" stroke-width="1" opacity=".35"/>
+            <rect x="36" y="56" width="16" height="14" fill="#fff" stroke="#373737" stroke-width="1"/>
+            <circle cx="22" cy="30" r="3" fill="#ffc409" opacity=".85"/>
+            <circle cx="66" cy="30" r="3" fill="#0cd1e8" opacity=".6"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 装飾：区切りイラスト -->
+    <div class="mx-auto mt-10 flex max-w-6xl flex-wrap items-center justify-center gap-6 px-2 opacity-80" aria-hidden="true">
+      <svg width="160" height="32" viewBox="0 0 160 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 8c20 12 40-8 60 8s40-8 60 8 40-8 40 8" stroke="#0cd1e8" stroke-width="1.5" stroke-linecap="round" opacity=".45"/>
+        <path d="M12 18h10l-5 10zm32 0h10l-5 10zm32 0h10l-5 10zm32 0h10l-5 10zm32 0h10l-5 10z" fill="#7044ff" opacity=".35"/>
+      </svg>
+      <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="28" cy="40" rx="18" ry="6" fill="#0cd1e8" opacity=".12"/>
+        <rect x="14" y="22" width="28" height="18" rx="3" fill="#fff" stroke="#7044ff" stroke-width="1.2"/>
+        <path d="M12 22l16-12 16 12" fill="#dff8fc" stroke="#0cd1e8" stroke-width="1.2"/>
+        <circle cx="22" cy="30" r="2.5" fill="#7044ff" opacity=".5"/>
+        <circle cx="34" cy="30" r="2.5" fill="#0cd1e8" opacity=".5"/>
+      </svg>
+    </div>
+
+    <!-- Section 1: Rules -->
+    <section id="rules" class="mt-14 scroll-mt-28">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-horby-cyanDark">Section 1</p>
+          <h2 class="mt-1 flex flex-wrap items-center gap-3 text-2xl font-bold text-horby-ink sm:text-3xl">
+            出店条件・ルール
+            <span class="hidden opacity-90 sm:inline" aria-hidden="true">
+              <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="22" cy="22" r="20" fill="#dff8fc" stroke="#0cd1e8" stroke-width="1" opacity=".9"/>
+                <path d="M14 26c2.5-4 6-6 8-6s5.5 2 8 6" stroke="#7044ff" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+                <circle cx="16" cy="18" r="2" fill="#7044ff" opacity=".6"/>
+                <circle cx="28" cy="18" r="2" fill="#0cd1e8" opacity=".6"/>
+              </svg>
+            </span>
+          </h2>
+          <p class="mt-2 max-w-2xl text-sm text-horby-sub">安心して参加できるよう、必ずお読みください。</p>
+        </div>
+        <span class="inline-flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-800 ring-1 ring-amber-100">
+          <span data-lucide="alert-triangle" class="h-4 w-4"></span>
+          ルール遵守が前提です
+        </span>
+      </div>
+
+      <div class="mt-8 grid gap-5 lg:grid-cols-2">
+        <div class="rounded-3xl border border-white/80 bg-white/90 p-6 shadow-card backdrop-blur">
+          <h3 class="flex items-center gap-2 text-lg font-bold text-horby-ink">
+            <span data-lucide="check-circle" class="h-6 w-6 text-emerald-500"></span>
+            出店条件
+          </h3>
+          <ul class="mt-4 space-y-3 text-sm leading-relaxed text-horby-sub">
+            <li class="flex gap-3">
+              <span class="mt-0.5 shrink-0 text-horby-cyan" data-lucide="badge-check"></span>
+              <span><strong class="text-horby-ink">SA加盟店が基本</strong>（各ルーム1店舗のみ、非SAも可）</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="mt-0.5 shrink-0 text-horby-cyan" data-lucide="users"></span>
+              <span><strong class="text-horby-ink">以前にお客様として参加経験</strong>があること</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="mt-0.5 shrink-0 text-horby-cyan" data-lucide="user-plus"></span>
+              <span><strong class="text-horby-ink">2名の集客</strong>（会員・非会員問わず）が必須</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="rounded-3xl border border-red-100 bg-gradient-to-br from-red-50/80 to-white p-6 shadow-card">
+          <h3 class="flex items-center gap-2 text-lg font-bold text-red-800">
+            <span data-lucide="ban" class="h-6 w-6"></span>
+            禁止事項・イエローカード
+          </h3>
+          <ul class="mt-4 space-y-2 text-sm text-red-900/90">
+            <li class="flex gap-2"><span data-lucide="x-circle" class="mt-0.5 h-4 w-4 shrink-0"></span>現金併用、二重価格、未審査メニューの販売</li>
+          </ul>
+          <div class="mt-5 rounded-2xl border border-amber-200 bg-amber-50/90 p-4">
+            <p class="flex items-start gap-2 text-sm font-semibold text-amber-900">
+              <span data-lucide="flag" class="mt-0.5 h-4 w-4 shrink-0"></span>
+              イエローカード制度
+            </p>
+            <p class="mt-2 text-sm leading-relaxed text-amber-900/90">累積<strong class="text-red-600">2回で注意</strong>、<strong class="text-red-600">3回で出店禁止</strong>となります。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Flow -->
+    <section id="flow" class="mt-16 scroll-mt-28">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-horby-cyanDark">Section 2 ★最重要★</p>
+          <h2 class="mt-1 text-2xl font-bold text-horby-ink sm:text-3xl">出店参加フロー（図解）</h2>
+          <p class="mt-2 max-w-2xl text-sm text-horby-sub">左から順に進むフローです。スマホでは縦スクロール、PCでは横スクロールで全体像を追えます。</p>
+        </div>
+      </div>
+
+      <div class="mt-4 flex justify-center opacity-75" aria-hidden="true">
+        <svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 28c16-14 32 14 48 0s32 14 48 0" stroke="#7044ff" stroke-width="1.3" stroke-linecap="round" opacity=".4"/>
+          <rect x="52" y="8" width="16" height="10" rx="2" fill="#0cd1e8" opacity=".25"/>
+          <circle cx="32" cy="20" r="5" fill="#0cd1e8" opacity=".2"/>
+          <circle cx="88" cy="20" r="5" fill="#7044ff" opacity=".2"/>
+          <path d="M58 18v-6M62 18v-6" stroke="#0aa3bc" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 shadow-sm">
+        <p class="flex flex-wrap items-center gap-2 font-semibold">
+          <span data-lucide="alert-triangle" class="h-5 w-5 shrink-0 text-red-600"></span>
+          <span>募集開始後の申込フォームは<strong class="text-red-700">30分間限定オープン</strong>。</span>
+        </p>
+        <p class="mt-1 flex flex-wrap items-center gap-2 pl-7 text-red-800/95">
+          <span data-lucide="clock" class="h-4 w-4 shrink-0 text-red-600"></span>
+          <strong class="text-red-700">SA加盟店と一般加盟店で申込日が異なります</strong>（要確認）。
+        </p>
+      </div>
+
+      <!-- Mobile / narrow: vertical timeline -->
+      <div class="relative mt-8 lg:hidden">
+        <div class="timeline-line relative space-y-6 pl-10">
+          <!-- Step 1 -->
+          <div class="relative rounded-2xl border border-horby-line bg-white p-5 shadow-card">
+            <span class="absolute -left-[1.6rem] top-5 flex h-8 w-8 items-center justify-center rounded-full bg-horby-violet text-xs font-bold text-white shadow-md ring-4 ring-white">1</span>
+            <div class="flex items-start gap-3">
+              <span data-lucide="award" class="mt-0.5 h-6 w-6 shrink-0 text-horby-violet"></span>
+              <div>
+                <h3 class="font-bold text-horby-ink">推薦</h3>
+                <p class="mt-1 text-sm leading-relaxed text-horby-sub">アチーバからの推薦を受け、申し込みフォームを受け取る。<span class="text-slate-500">（LINEグループで募集日時をアナウンス）</span></p>
+              </div>
+            </div>
+          </div>
+          <div class="relative rounded-2xl border border-horby-line bg-white p-5 shadow-card">
+            <span class="absolute -left-[1.6rem] top-5 flex h-8 w-8 items-center justify-center rounded-full bg-horby-violet text-xs font-bold text-white shadow-md ring-4 ring-white">2</span>
+            <div class="flex items-start gap-3">
+              <span data-lucide="clipboard-list" class="mt-0.5 h-6 w-6 shrink-0 text-horby-violet"></span>
+              <div>
+                <h3 class="font-bold text-horby-ink">申込</h3>
+                <p class="mt-1 text-sm leading-relaxed text-horby-sub">募集開始後<strong class="text-red-600">30分間限定</strong>でフォームオープン。</p>
+              </div>
+            </div>
+          </div>
+          <div class="relative rounded-2xl border border-horby-line bg-white p-5 shadow-card">
+            <span class="absolute -left-[1.6rem] top-5 flex h-8 w-8 items-center justify-center rounded-full bg-horby-violet text-xs font-bold text-white shadow-md ring-4 ring-white">3</span>
+            <div class="flex items-start gap-3">
+              <span data-lucide="messages-square" class="mt-0.5 h-6 w-6 shrink-0 text-horby-violet"></span>
+              <div>
+                <h3 class="font-bold text-horby-ink">招待</h3>
+                <p class="mt-1 text-sm leading-relaxed text-horby-sub">募集2週間後、アチーバより<strong>ジャンル別LINEグループ</strong>へ招待。</p>
+              </div>
+            </div>
+          </div>
+          <div class="relative rounded-2xl border border-horby-line bg-white p-5 shadow-card">
+            <span class="absolute -left-[1.6rem] top-5 flex h-8 w-8 items-center justify-center rounded-full bg-horby-violet text-xs font-bold text-white shadow-md ring-4 ring-white">4</span>
+            <div class="flex items-start gap-3">
+              <span data-lucide="wallet" class="mt-0.5 h-6 w-6 shrink-0 text-horby-violet"></span>
+              <div>
+                <h3 class="font-bold text-horby-ink">決済</h3>
+                <p class="mt-1 text-sm leading-relaxed text-horby-sub">参加費<strong>5,000pt</strong>を贈るポイントで決済。決済画面のスクショをLINE送信（<strong class="text-red-600">贈り先変更に注意</strong>）。</p>
+              </div>
+            </div>
+          </div>
+          <div class="relative rounded-2xl border border-horby-line bg-white p-5 shadow-card">
+            <span class="absolute -left-[1.6rem] top-5 flex h-8 w-8 items-center justify-center rounded-full bg-horby-violet text-xs font-bold text-white shadow-md ring-4 ring-white">5</span>
+            <div class="flex items-start gap-3">
+              <span data-lucide="shield-check" class="mt-0.5 h-6 w-6 shrink-0 text-horby-violet"></span>
+              <div>
+                <h3 class="font-bold text-horby-ink">証明</h3>
+                <p class="mt-1 text-sm leading-relaxed text-horby-sub">SA加盟店は、店舗TOPの<strong>「SA加盟店表示」</strong>をスクショしてLINE送信。</p>
+              </div>
+            </div>
+          </div>
+          <div class="relative rounded-2xl border border-horby-line bg-white p-5 shadow-card">
+            <span class="absolute -left-[1.6rem] top-5 flex h-8 w-8 items-center justify-center rounded-full bg-horby-violet text-xs font-bold text-white shadow-md ring-4 ring-white">6</span>
+            <div class="flex items-start gap-3">
+              <span data-lucide="presentation" class="mt-0.5 h-6 w-6 shrink-0 text-horby-violet"></span>
+              <div>
+                <h3 class="font-bold text-horby-ink">準備</h3>
+                <p class="mt-1 text-sm leading-relaxed text-horby-sub">プレゼン資料準備（メニューは<strong>2つまで推奨</strong>）、ナビゲーターと打ち合わせ（<strong class="text-red-600">順番希望不可</strong>）。</p>
+              </div>
+            </div>
+          </div>
+          <div class="relative rounded-2xl border border-horby-line bg-white p-5 shadow-card">
+            <span class="absolute -left-[1.6rem] top-5 flex h-8 w-8 items-center justify-center rounded-full bg-horby-violet text-xs font-bold text-white shadow-md ring-4 ring-white">7</span>
+            <div class="flex items-start gap-3">
+              <span data-lucide="mic" class="mt-0.5 h-6 w-6 shrink-0 text-horby-violet"></span>
+              <div>
+                <h3 class="font-bold text-horby-ink">リハ</h3>
+                <p class="mt-1 text-sm leading-relaxed text-horby-sub">リハーサル参加必須。<strong class="text-red-600">5分以上の遅刻は欠席扱い</strong>。</p>
+              </div>
+            </div>
+          </div>
+          <div class="relative rounded-2xl border border-horby-line bg-white p-5 shadow-card">
+            <span class="absolute -left-[1.6rem] top-5 flex h-8 w-8 items-center justify-center rounded-full bg-horby-violet text-xs font-bold text-white shadow-md ring-4 ring-white">8</span>
+            <div class="flex items-start gap-3">
+              <span data-lucide="party-popper" class="mt-0.5 h-6 w-6 shrink-0 text-horby-violet"></span>
+              <div>
+                <h3 class="font-bold text-horby-ink">本番・報告</h3>
+                <p class="mt-1 text-sm leading-relaxed text-horby-sub">マルシェ後<strong>3日間は特別価格</strong>掲載。終了後、<strong>ポイント売上報告（応援含む）を必須</strong>。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desktop: horizontal scroll cards -->
+      <div class="mt-8 hidden lg:block">
+        <div class="flow-scroll flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 pt-1">
+          <!-- card template x8 with connectors -->
+          <article class="snap-start shrink-0 w-[260px] rounded-2xl border border-horby-line bg-white p-5 shadow-card">
+            <div class="flex items-center justify-between">
+              <span class="rounded-full bg-horby-violetSoft px-2 py-0.5 text-xs font-bold text-horby-violetDark">STEP 1</span>
+              <span data-lucide="award" class="h-6 w-6 text-horby-violet"></span>
+            </div>
+            <h3 class="mt-3 text-lg font-bold text-horby-ink">推薦</h3>
+            <p class="mt-2 text-sm leading-relaxed text-horby-sub">アチーバから推薦 → 申込フォーム受領。LINEで募集日時アナウンス。</p>
+          </article>
+          <div class="flex shrink-0 items-center text-cyan-400/90">
+            <span data-lucide="step-forward" class="h-8 w-8"></span>
+          </div>
+          <article class="snap-start shrink-0 w-[260px] rounded-2xl border border-red-100 bg-white p-5 shadow-card ring-1 ring-red-50">
+            <div class="flex items-center justify-between">
+              <span class="rounded-full bg-red-100 px-2 py-0.5 text-xs font-bold text-red-700">STEP 2</span>
+              <span data-lucide="clipboard-list" class="h-6 w-6 text-horby-violet"></span>
+            </div>
+            <h3 class="mt-3 text-lg font-bold text-horby-ink">申込</h3>
+            <p class="mt-2 text-sm leading-relaxed text-horby-sub"><strong class="text-red-600">30分限定</strong>オープン。SA／一般で申込日が異なる点に注意。</p>
+          </article>
+          <div class="flex shrink-0 items-center text-cyan-400/90">
+            <span data-lucide="step-forward" class="h-8 w-8"></span>
+          </div>
+          <article class="snap-start shrink-0 w-[260px] rounded-2xl border border-horby-line bg-white p-5 shadow-card">
+            <div class="flex items-center justify-between">
+              <span class="rounded-full bg-horby-violetSoft px-2 py-0.5 text-xs font-bold text-horby-violetDark">STEP 3</span>
+              <span data-lucide="messages-square" class="h-6 w-6 text-horby-violet"></span>
+            </div>
+            <h3 class="mt-3 text-lg font-bold text-horby-ink">招待</h3>
+            <p class="mt-2 text-sm leading-relaxed text-horby-sub">募集2週間後、ジャンル別LINEグループへ招待。</p>
+          </article>
+          <div class="flex shrink-0 items-center text-cyan-400/90">
+            <span data-lucide="step-forward" class="h-8 w-8"></span>
+          </div>
+          <article class="snap-start shrink-0 w-[260px] rounded-2xl border border-horby-line bg-white p-5 shadow-card">
+            <div class="flex items-center justify-between">
+              <span class="rounded-full bg-horby-violetSoft px-2 py-0.5 text-xs font-bold text-horby-violetDark">STEP 4</span>
+              <span data-lucide="wallet" class="h-6 w-6 text-horby-violet"></span>
+            </div>
+            <h3 class="mt-3 text-lg font-bold text-horby-ink">決済</h3>
+            <p class="mt-2 text-sm leading-relaxed text-horby-sub">5,000ptを贈るポイントで決済。スクショをLINE。<strong class="text-red-600">贈り先変更注意</strong>。</p>
+          </article>
+          <div class="flex shrink-0 items-center text-cyan-400/90">
+            <span data-lucide="step-forward" class="h-8 w-8"></span>
+          </div>
+          <article class="snap-start shrink-0 w-[260px] rounded-2xl border border-horby-line bg-white p-5 shadow-card">
+            <div class="flex items-center justify-between">
+              <span class="rounded-full bg-horby-violetSoft px-2 py-0.5 text-xs font-bold text-horby-violetDark">STEP 5</span>
+              <span data-lucide="shield-check" class="h-6 w-6 text-horby-violet"></span>
+            </div>
+            <h3 class="mt-3 text-lg font-bold text-horby-ink">証明</h3>
+            <p class="mt-2 text-sm leading-relaxed text-horby-sub">SA加盟店はTOPの「SA加盟店表示」をスクショして送信。</p>
+          </article>
+          <div class="flex shrink-0 items-center text-cyan-400/90">
+            <span data-lucide="step-forward" class="h-8 w-8"></span>
+          </div>
+          <article class="snap-start shrink-0 w-[260px] rounded-2xl border border-horby-line bg-white p-5 shadow-card">
+            <div class="flex items-center justify-between">
+              <span class="rounded-full bg-horby-violetSoft px-2 py-0.5 text-xs font-bold text-horby-violetDark">STEP 6</span>
+              <span data-lucide="presentation" class="h-6 w-6 text-horby-violet"></span>
+            </div>
+            <h3 class="mt-3 text-lg font-bold text-horby-ink">準備</h3>
+            <p class="mt-2 text-sm leading-relaxed text-horby-sub">資料・メニュー2つ推奨。ナビ打合せ（<strong class="text-red-600">順番希望不可</strong>）。</p>
+          </article>
+          <div class="flex shrink-0 items-center text-cyan-400/90">
+            <span data-lucide="step-forward" class="h-8 w-8"></span>
+          </div>
+          <article class="snap-start shrink-0 w-[260px] rounded-2xl border border-red-100 bg-white p-5 shadow-card ring-1 ring-red-50">
+            <div class="flex items-center justify-between">
+              <span class="rounded-full bg-red-100 px-2 py-0.5 text-xs font-bold text-red-700">STEP 7</span>
+              <span data-lucide="mic" class="h-6 w-6 text-horby-violet"></span>
+            </div>
+            <h3 class="mt-3 text-lg font-bold text-horby-ink">リハ</h3>
+            <p class="mt-2 text-sm leading-relaxed text-horby-sub">参加必須。<strong class="text-red-600">5分以上遅刻＝欠席</strong>。</p>
+          </article>
+          <div class="flex shrink-0 items-center text-cyan-400/90">
+            <span data-lucide="step-forward" class="h-8 w-8"></span>
+          </div>
+          <article class="snap-start shrink-0 w-[260px] rounded-2xl border border-horby-line bg-white p-5 shadow-card">
+            <div class="flex items-center justify-between">
+              <span class="rounded-full bg-horby-violetSoft px-2 py-0.5 text-xs font-bold text-horby-violetDark">STEP 8</span>
+              <span data-lucide="party-popper" class="h-6 w-6 text-horby-violet"></span>
+            </div>
+            <h3 class="mt-3 text-lg font-bold text-horby-ink">本番・報告</h3>
+            <p class="mt-2 text-sm leading-relaxed text-horby-sub">終了後3日間は特別価格。売上報告（応援含む）必須。</p>
+          </article>
+        </div>
+        <p class="mt-2 flex items-center gap-2 text-xs text-slate-500">
+          <span data-lucide="mouse-pointer-click" class="h-4 w-4"></span>
+          カード列は横スクロールで全体をご確認ください。
+        </p>
+      </div>
+    </section>
+
+    <div class="mx-auto mt-12 flex max-w-6xl items-center justify-center gap-4 px-2 text-horby-cyan opacity-70" aria-hidden="true">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="18" cy="18" r="8" fill="#ffc409" opacity=".35"/>
+        <path d="M18 4v4M18 28v4M4 18h4M28 18h4M7.5 7.5l2.8 2.8M25.7 25.7l2.8 2.8M7.5 28.5l2.8-2.8M25.7 10.3l2.8-2.8" stroke="#0cd1e8" stroke-width="1.2" stroke-linecap="round" opacity=".5"/>
+      </svg>
+      <div class="h-px max-w-xs flex-1 bg-gradient-to-r from-transparent via-horby-line to-transparent"></div>
+      <svg width="40" height="32" viewBox="0 0 40 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 26 L12 10 L20 26 L28 10 L36 26" stroke="#7044ff" stroke-width="1.2" fill="none" opacity=".4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <!-- Section 3: Year schedule（2026年度 公式表に準拠） -->
+    <section id="year" class="mt-16 scroll-mt-28">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-widest text-horby-cyanDark">Section 3</p>
+        <h2 class="mt-1 text-2xl font-bold text-horby-ink sm:text-3xl">2026年度 開催日程と時間区分</h2>
+        <p class="mt-2 text-sm text-horby-sub">
+          本番は原則<strong class="text-horby-violetDark">第4土曜</strong>です。<strong class="text-horby-violetDark">昼枠（14:00〜）と夜枠（20:00〜）</strong>があり、<strong>回ごとに本番・リハの時刻が異なります</strong>。リハーサルは<strong>本番の1週間前の土曜</strong>、<strong>開始時刻は本番当日と同じ</strong>（約1時間）です。
+        </p>
+      </div>
+
+      <div class="mt-5 grid gap-3 sm:grid-cols-2">
+        <div class="flex items-start gap-3 rounded-2xl border border-amber-200/80 bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 p-4 shadow-sm">
+          <span class="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-400/90 text-amber-950 shadow-sm" data-lucide="sun"></span>
+          <div>
+            <p class="font-bold text-amber-950">昼開催</p>
+            <p class="mt-1 text-xs leading-relaxed text-amber-900/90">4月・7月・10月｜本番 <strong>14:00〜16:00</strong>／リハ <strong>14:00〜15:00</strong></p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3 rounded-2xl border border-indigo-900/40 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-4 shadow-md text-white">
+          <span class="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-500/35 text-indigo-50" data-lucide="moon"></span>
+          <div>
+            <p class="font-bold text-white">夜開催</p>
+            <p class="mt-1 text-xs leading-relaxed text-indigo-100">5〜6月・8〜9月・11〜12月｜本番 <strong>20:00〜22:00</strong>／リハ <strong>20:00〜21:00</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 overflow-hidden rounded-3xl border border-white/80 bg-white/95 shadow-card">
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[640px] text-left text-sm">
+            <thead class="bg-slate-100 text-xs font-bold uppercase tracking-wide text-horby-sub">
+              <tr>
+                <th class="whitespace-nowrap px-4 py-3">月</th>
+                <th class="whitespace-nowrap px-4 py-3">区分</th>
+                <th class="whitespace-nowrap px-4 py-3">本番日時</th>
+                <th class="whitespace-nowrap px-4 py-3">リハーサル日時</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-amber-100 bg-gradient-to-r from-amber-50 via-orange-50/95 to-amber-50 text-amber-950 transition hover:brightness-[1.02]">
+                <td class="px-4 py-3.5 font-bold">4月</td>
+                <td class="px-4 py-3.5">
+                  <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-300/90 px-2.5 py-1 text-xs font-bold text-amber-950"><span data-lucide="sun" class="h-3.5 w-3.5"></span>昼開催</span>
+                </td>
+                <td class="px-4 py-3.5 font-semibold">4/25（土）14:00〜16:00</td>
+                <td class="px-4 py-3.5 text-amber-950/90">4/18（土）14:00〜15:00</td>
+              </tr>
+              <tr class="border-b border-slate-800/30 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-slate-50 transition hover:brightness-110">
+                <td class="px-4 py-3.5 font-bold text-white">5月</td>
+                <td class="px-4 py-3.5">
+                  <span class="inline-flex items-center gap-1.5 rounded-full bg-indigo-500/40 px-2.5 py-1 text-xs font-bold text-white ring-1 ring-indigo-400/40"><span data-lucide="moon" class="h-3.5 w-3.5"></span>夜開催</span>
+                </td>
+                <td class="px-4 py-3.5 font-semibold text-white">5/23（土）20:00〜22:00</td>
+                <td class="px-4 py-3.5 text-indigo-100">5/16（土）20:00〜21:00</td>
+              </tr>
+              <tr class="border-b border-slate-800/30 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-slate-50 transition hover:brightness-110">
+                <td class="px-4 py-3.5 font-bold text-white">6月</td>
+                <td class="px-4 py-3.5">
+                  <span class="inline-flex items-center gap-1.5 rounded-full bg-indigo-500/40 px-2.5 py-1 text-xs font-bold text-white ring-1 ring-indigo-400/40"><span data-lucide="moon" class="h-3.5 w-3.5"></span>夜開催</span>
+                </td>
+                <td class="px-4 py-3.5 font-semibold text-white">6/27（土）20:00〜22:00</td>
+                <td class="px-4 py-3.5 text-indigo-100">6/20（土）20:00〜21:00</td>
+              </tr>
+              <tr class="border-b border-amber-100 bg-gradient-to-r from-amber-50 via-orange-50/95 to-amber-50 text-amber-950 transition hover:brightness-[1.02]">
+                <td class="px-4 py-3.5 font-bold">7月</td>
+                <td class="px-4 py-3.5">
+                  <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-300/90 px-2.5 py-1 text-xs font-bold text-amber-950"><span data-lucide="sun" class="h-3.5 w-3.5"></span>昼開催</span>
+                </td>
+                <td class="px-4 py-3.5 font-semibold">7/25（土）14:00〜16:00</td>
+                <td class="px-4 py-3.5 text-amber-950/90">7/18（土）14:00〜15:00</td>
+              </tr>
+              <tr class="border-b border-slate-800/30 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-slate-50 transition hover:brightness-110">
+                <td class="px-4 py-3.5 font-bold text-white">8月</td>
+                <td class="px-4 py-3.5">
+                  <span class="inline-flex items-center gap-1.5 rounded-full bg-indigo-500/40 px-2.5 py-1 text-xs font-bold text-white ring-1 ring-indigo-400/40"><span data-lucide="moon" class="h-3.5 w-3.5"></span>夜開催</span>
+                </td>
+                <td class="px-4 py-3.5 font-semibold text-white">8/22（土）20:00〜22:00</td>
+                <td class="px-4 py-3.5 text-indigo-100">8/15（土）20:00〜21:00</td>
+              </tr>
+              <tr class="border-b border-slate-800/30 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-slate-50 transition hover:brightness-110">
+                <td class="px-4 py-3.5 font-bold text-white">9月</td>
+                <td class="px-4 py-3.5">
+                  <span class="inline-flex items-center gap-1.5 rounded-full bg-indigo-500/40 px-2.5 py-1 text-xs font-bold text-white ring-1 ring-indigo-400/40"><span data-lucide="moon" class="h-3.5 w-3.5"></span>夜開催</span>
+                </td>
+                <td class="px-4 py-3.5 font-semibold text-white">9/26（土）20:00〜22:00</td>
+                <td class="px-4 py-3.5 text-indigo-100">9/19（土）20:00〜21:00</td>
+              </tr>
+              <tr class="border-b border-amber-100 bg-gradient-to-r from-amber-50 via-orange-50/95 to-amber-50 text-amber-950 transition hover:brightness-[1.02]">
+                <td class="px-4 py-3.5 font-bold">10月</td>
+                <td class="px-4 py-3.5">
+                  <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-300/90 px-2.5 py-1 text-xs font-bold text-amber-950"><span data-lucide="sun" class="h-3.5 w-3.5"></span>昼開催</span>
+                </td>
+                <td class="px-4 py-3.5 font-semibold">10/24（土）14:00〜16:00</td>
+                <td class="px-4 py-3.5 text-amber-950/90">10/17（土）14:00〜15:00</td>
+              </tr>
+              <tr class="border-b border-slate-800/30 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-slate-50 transition hover:brightness-110">
+                <td class="px-4 py-3.5 font-bold text-white">11月</td>
+                <td class="px-4 py-3.5">
+                  <span class="inline-flex items-center gap-1.5 rounded-full bg-indigo-500/40 px-2.5 py-1 text-xs font-bold text-white ring-1 ring-indigo-400/40"><span data-lucide="moon" class="h-3.5 w-3.5"></span>夜開催</span>
+                </td>
+                <td class="px-4 py-3.5 font-semibold text-white">11/28（土）20:00〜22:00</td>
+                <td class="px-4 py-3.5 text-indigo-100">11/21（土）20:00〜21:00</td>
+              </tr>
+              <tr class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-slate-50 transition hover:brightness-110">
+                <td class="px-4 py-3.5 font-bold text-white">12月</td>
+                <td class="px-4 py-3.5">
+                  <span class="inline-flex items-center gap-1.5 rounded-full bg-indigo-500/40 px-2.5 py-1 text-xs font-bold text-white ring-1 ring-indigo-400/40"><span data-lucide="moon" class="h-3.5 w-3.5"></span>夜開催</span>
+                </td>
+                <td class="px-4 py-3.5 font-semibold text-white">12/26（土）20:00〜22:00</td>
+                <td class="px-4 py-3.5 text-indigo-100">12/19（土）20:00〜21:00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="space-y-2 border-t border-slate-100 bg-slate-50/90 px-4 py-3 text-xs leading-relaxed text-horby-sub">
+          <p><strong class="text-horby-ink">定例区分：</strong>4・7・10月は昼開催、その他の月（5〜6・8〜9・11〜12月）は夜開催です。</p>
+          <p><strong class="text-horby-ink">リハーサル：</strong>本番の1週間前の土曜に実施。所要は約1時間で、開始時刻は本番と同じです。</p>
+          <p class="text-slate-500">※1〜3月・説明会など表にない枠は、LINE等の運営アナウンスをご確認ください。※変更時は運営の指示が優先されます。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Day schedule（昼／夜で時刻が異なる旨を併記） -->
+    <section id="day" class="mt-16 scroll-mt-28">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-widest text-horby-cyanDark">Section 4</p>
+        <h2 class="mt-1 text-2xl font-bold text-horby-ink sm:text-3xl">当日のタイムスケジュール</h2>
+        <p class="mt-2 max-w-3xl text-sm text-horby-sub">
+          開催回により<strong class="text-horby-violetDark">開始・終了時刻が異なります</strong>（夜：20:00開始／昼：14:00開始）。以下は<strong>進行の目安</strong>です。当日の集合・入室時刻は必ず<strong>該当回の案内</strong>を確認してください。
+        </p>
+      </div>
+
+      <div class="mt-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900 shadow-sm">
+        <p class="flex flex-wrap items-start gap-2 font-bold">
+          <span data-lucide="alert-triangle" class="mt-0.5 h-5 w-5 shrink-0 text-red-600"></span>
+          <span><strong class="text-red-800">遅刻厳禁：</strong>夜開催は<strong class="text-red-700">19:30入室</strong>、昼開催は<strong class="text-red-700">13:30入室</strong>を目安に、いずれも<strong class="text-red-700">5分遅刻は警告対象</strong>です（運営指示がある場合はそちらを優先）。</span>
+        </p>
+      </div>
+
+      <div class="mt-8 grid gap-10 lg:grid-cols-2">
+        <div>
+          <h3 class="flex flex-wrap items-center gap-2 text-lg font-bold text-horby-ink">
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-horby-violetSoft text-horby-violet" data-lucide="moon"></span>
+            夜開催（20:00〜22:00）の目安
+          </h3>
+          <ol class="mt-4 space-y-4">
+            <li class="flex gap-4 rounded-2xl border border-white/80 bg-white/95 p-4 shadow-card sm:items-center sm:p-5">
+              <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-horby-violetSoft text-horby-violet" data-lucide="door-open"></span>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-bold uppercase tracking-wide text-horby-cyanDark">入室</p>
+                <p class="text-lg font-bold text-horby-ink">19:30</p>
+                <p class="text-sm text-horby-sub">出店者入室厳守（遅刻に注意）</p>
+              </div>
+            </li>
+            <li class="flex gap-4 rounded-2xl border border-white/80 bg-white/95 p-4 shadow-card sm:items-center sm:p-5">
+              <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sky-100 text-sky-700" data-lucide="clapperboard"></span>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-bold uppercase tracking-wide text-sky-600">オープニング</p>
+                <p class="text-lg font-bold text-horby-ink">20:00</p>
+                <p class="text-sm text-horby-sub">オープニング・店舗紹介</p>
+              </div>
+            </li>
+            <li class="flex gap-4 rounded-2xl border border-white/80 bg-white/95 p-4 shadow-card sm:items-center sm:p-5">
+              <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-violet-100 text-violet-700" data-lucide="shopping-bag"></span>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-bold uppercase tracking-wide text-violet-600">マルシェ</p>
+                <p class="text-lg font-bold text-horby-ink">20:15頃〜</p>
+                <p class="text-sm text-horby-sub">マルシェスタート（20分×数セット／10分プレゼン・5分質疑・5分インターバル）</p>
+              </div>
+            </li>
+            <li class="flex gap-4 rounded-2xl border border-white/80 bg-white/95 p-4 shadow-card sm:items-center sm:p-5">
+              <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700" data-lucide="message-circle-heart"></span>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-bold uppercase tracking-wide text-emerald-600">クロージング</p>
+                <p class="text-lg font-bold text-horby-ink">21:30頃</p>
+                <p class="text-sm text-horby-sub">閉会・感想シェア</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+        <div>
+          <h3 class="flex flex-wrap items-center gap-2 text-lg font-bold text-horby-ink">
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-100 text-amber-700" data-lucide="sun"></span>
+            昼開催（14:00〜16:00）の目安
+          </h3>
+          <p class="mt-2 text-xs text-slate-500">夜開催と同じ進行比率を、<strong class="text-slate-700">14:00開始・16:00終了</strong>の2時間枠に合わせた目安です。</p>
+          <ol class="mt-4 space-y-4">
+            <li class="flex gap-4 rounded-2xl border border-amber-100/80 bg-gradient-to-br from-amber-50/90 to-white p-4 shadow-card sm:items-center sm:p-5">
+              <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-100 text-amber-800" data-lucide="door-open"></span>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-bold uppercase tracking-wide text-amber-700">入室</p>
+                <p class="text-lg font-bold text-horby-ink">13:30</p>
+                <p class="text-sm text-horby-sub">出店者入室厳守（遅刻に注意）</p>
+              </div>
+            </li>
+            <li class="flex gap-4 rounded-2xl border border-amber-100/80 bg-gradient-to-br from-amber-50/90 to-white p-4 shadow-card sm:items-center sm:p-5">
+              <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-orange-100 text-orange-800" data-lucide="clapperboard"></span>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-bold uppercase tracking-wide text-orange-700">オープニング</p>
+                <p class="text-lg font-bold text-horby-ink">14:00</p>
+                <p class="text-sm text-horby-sub">オープニング・店舗紹介</p>
+              </div>
+            </li>
+            <li class="flex gap-4 rounded-2xl border border-amber-100/80 bg-gradient-to-br from-amber-50/90 to-white p-4 shadow-card sm:items-center sm:p-5">
+              <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-amber-100 text-amber-800" data-lucide="shopping-bag"></span>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-bold uppercase tracking-wide text-amber-800">マルシェ</p>
+                <p class="text-lg font-bold text-horby-ink">14:15頃〜</p>
+                <p class="text-sm text-horby-sub">進行フォーマットは夜開催と同様（20分×数セット／10分プレゼン・5分質疑・5分インターバル）</p>
+              </div>
+            </li>
+            <li class="flex gap-4 rounded-2xl border border-amber-100/80 bg-gradient-to-br from-amber-50/90 to-white p-4 shadow-card sm:items-center sm:p-5">
+              <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-lime-100 text-lime-800" data-lucide="message-circle-heart"></span>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-bold uppercase tracking-wide text-lime-800">クロージング</p>
+                <p class="text-lg font-bold text-horby-ink">15:30頃〜16:00</p>
+                <p class="text-sm text-horby-sub">閉会・感想シェア（本番枠 16:00 まで）</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- マルシェの様子（写真） — Section 5 直前 -->
+    <section id="gallery" class="mt-16 scroll-mt-28" aria-labelledby="gallery-heading">
+      <div class="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-widest text-horby-cyanDark">Gallery</p>
+          <h2 id="gallery-heading" class="mt-1 text-xl font-bold text-horby-ink sm:text-2xl">マルシェの様子</h2>
+          <p class="mt-1 max-w-2xl text-sm text-horby-sub">オンライン会場の活気・出店者同士のつながりのイメージです。</p>
+        </div>
+        <span class="hidden opacity-80 sm:block" aria-hidden="true">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="6" y="12" width="36" height="26" rx="3" fill="#dff8fc" stroke="#0cd1e8" stroke-width="1.2"/>
+            <circle cx="16" cy="24" r="4" fill="#7044ff" opacity=".25"/>
+            <circle cx="32" cy="24" r="4" fill="#0cd1e8" opacity=".25"/>
+            <path d="M12 38h24" stroke="#373737" stroke-width="1.2" stroke-linecap="round" opacity=".3"/>
+          </svg>
+        </span>
+      </div>
+      <div class="mt-6 overflow-hidden rounded-3xl border border-horby-line bg-horby-panel shadow-card">
+        <img
+          src="images/marche-online-gallery.png"
+          alt="グローバルUオンラインマルシェのオンライン会場。ギャラリービューで多くの参加者がビデオ会議につながっている様子。"
+          class="h-auto w-full object-cover object-top"
+          width="1280"
+          height="720"
+          loading="lazy"
+          decoding="async"
+        />
+        <div class="border-t border-horby-line bg-horby-page/70 px-4 py-3 sm:px-6">
+          <p class="text-xs leading-relaxed text-horby-sub">※当日の画面構成・人数は回により異なります。出店者・お客様・運営が「三方良し」になるよう工夫された場づくりの一例です。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: FAQ -->
+    <section id="faq" class="mt-16 scroll-mt-28">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-widest text-horby-cyanDark">Section 5</p>
+        <h2 class="mt-1 text-2xl font-bold text-horby-ink sm:text-3xl">よくある質問（Q&amp;A）</h2>
+      </div>
+      <div class="mt-8 space-y-4">
+        <details class="group rounded-2xl border border-horby-line bg-white/95 p-5 shadow-card open:ring-2 open:ring-cyan-100">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-3 font-bold text-horby-ink">
+            <span class="flex items-center gap-2"><span data-lucide="help-circle" class="h-5 w-5 text-horby-violet"></span>出店費用はいくらですか？</span>
+            <span data-lucide="chevron-down" class="h-5 w-5 shrink-0 text-slate-400 transition group-open:rotate-180"></span>
+          </summary>
+          <p class="mt-3 border-t border-slate-100 pt-3 text-sm leading-relaxed text-horby-sub">参加費は<strong class="text-horby-ink">5,000pt</strong>です。贈るポイントでの決済となります。決済画面のスクショをLINEで送付する運用なので、<strong class="text-red-600">贈り先の設定ミス</strong>にご注意ください。</p>
+        </details>
+        <details class="group rounded-2xl border border-horby-line bg-white/95 p-5 shadow-card open:ring-2 open:ring-cyan-100">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-3 font-bold text-horby-ink">
+            <span class="flex items-center gap-2"><span data-lucide="monitor" class="h-5 w-5 text-horby-violet"></span>PC環境はどの程度必要ですか？</span>
+            <span data-lucide="chevron-down" class="h-5 w-5 shrink-0 text-slate-400 transition group-open:rotate-180"></span>
+          </summary>
+          <p class="mt-3 border-t border-slate-100 pt-3 text-sm leading-relaxed text-horby-sub">オンライン配信に耐える<strong class="text-horby-ink">安定したネット回線</strong>と、画面共有・カメラ・マイクが使えるPC環境を推奨します。事前のリハで音画確認を行い、当日は<strong class="text-red-600">入室・接続の遅れがないよう</strong>余裕を持ってご準備ください。</p>
+        </details>
+        <details class="group rounded-2xl border border-horby-line bg-white/95 p-5 shadow-card open:ring-2 open:ring-cyan-100">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-3 font-bold text-horby-ink">
+            <span class="flex items-center gap-2"><span data-lucide="life-buoy" class="h-5 w-5 text-horby-violet"></span>初出店でもサポートはありますか？</span>
+            <span data-lucide="chevron-down" class="h-5 w-5 shrink-0 text-slate-400 transition group-open:rotate-180"></span>
+          </summary>
+          <p class="mt-3 border-t border-slate-100 pt-3 text-sm leading-relaxed text-horby-sub">説明会・ジャンル別LINE・ナビゲーターとの打ち合わせ・<strong class="text-horby-ink">リハーサル</strong>まで、段階的に伴走する設計です。ただし<strong class="text-red-600">順番希望は不可</strong>など運営ルールは共通のため、早めの資料準備とコミュニケーションが成功の鍵になります。</p>
+        </details>
+        <details class="group rounded-2xl border border-horby-line bg-white/95 p-5 shadow-card open:ring-2 open:ring-cyan-100">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-3 font-bold text-horby-ink">
+            <span class="flex items-center gap-2"><span data-lucide="users-round" class="h-5 w-5 text-horby-violet"></span>集客2名は誰でも良いですか？</span>
+            <span data-lucide="chevron-down" class="h-5 w-5 shrink-0 text-slate-400 transition group-open:rotate-180"></span>
+          </summary>
+          <p class="mt-3 border-t border-slate-100 pt-3 text-sm leading-relaxed text-horby-sub">はい、<strong class="text-horby-ink">会員・非会員を問わず2名</strong>のご案内が条件です。マルシェの「体験の場」として意味のあるお客様をお誘いください。</p>
+        </details>
+        <details class="group rounded-2xl border border-horby-line bg-white/95 p-5 shadow-card open:ring-2 open:ring-cyan-100">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-3 font-bold text-horby-ink">
+            <span class="flex items-center gap-2"><span data-lucide="message-circle-question" class="h-5 w-5 text-horby-violet"></span>このページに書いてない不明点は誰に聞けばいいですか？</span>
+            <span data-lucide="chevron-down" class="h-5 w-5 shrink-0 text-slate-400 transition group-open:rotate-180"></span>
+          </summary>
+          <p class="mt-3 border-t border-slate-100 pt-3 text-sm leading-relaxed text-horby-sub"><strong class="text-horby-ink">上位アチーバーさんにご相談ください。</strong></p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-horby-line bg-white/90 py-8 text-center text-xs text-horby-sub backdrop-blur">
+    <p>ユーワード会員向けの情報整理ページです。開催日時・ルールの最新版は、必ず運営からのアナウンスをご確認ください。</p>
+    <p class="mt-2 text-[11px] text-slate-400">トーン参考：<a class="text-horby-cyanDark underline decoration-cyan-300 underline-offset-2 hover:text-horby-violet" href="https://u-word.com/horby" rel="noopener noreferrer" target="_blank">HORBY・てっぱん（u-word.com/horby）</a></p>
+  </footer>
+
+  <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.lucide && typeof lucide.createIcons === 'function') {
+        lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>
