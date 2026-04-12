@@ -1,0 +1,32 @@
+# コピーして config.yaml として編集してください。
+
+# Dropbox 上の明細フォルダ（先頭スラッシュ推奨）
+dropbox:
+  statements_folder: "/MinpakuStatements/2026-04"
+
+# オーナーマスタ（JSON）。owner_id とメール・表示名
+owners_file: "owners.json"
+
+# 明細 PDF とオーナーの突合
+# - naming: 1フォルダ内で {owner_id}_{YYYY-MM}.pdf（拡張子は .pdf 固定）
+# - subfolder: {statements_folder}/{owner_id}/{YYYY-MM}.pdf
+matching:
+  mode: "naming"
+  # mode: subfolder のときは次行のファイル名パターンを使用
+  subfolder_filename: "{year}-{month}.pdf"
+
+# メールテンプレート（UTF-8）
+email:
+  subject_template: "【民泊管理】{year}年{month}月分 明細のご送付"
+  body_template: |
+    {owner_name} 様
+
+    いつもお世話になっております。
+    {year}年{month}月分の明細書を添付いたします。
+    ご確認のうえ、ご不明点があればご連絡ください。
+
+    ※本メールは下書きから送信してください。
+
+gmail:
+  # 下書きの差出人として表示されるアカウント（通常は自分の Gmail）
+  send_as: "you@example.com"

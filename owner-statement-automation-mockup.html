@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>オーナー明細 メール下書き自動化 — 完成イメージ図解</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              900: '#0c4a6e',
+            },
+            ink: { DEFAULT: '#0f172a', muted: '#475569', faint: '#94a3b8' },
+          },
+          fontFamily: {
+            sans: ['"Noto Sans JP"', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            panel: '0 1px 3px rgba(15,23,42,.08), 0 12px 40px rgba(15,23,42,.06)',
+            lift: '0 4px 24px rgba(2,132,199,.12)',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    .grid-flow-lines {
+      background-image: linear-gradient(to right, rgb(226 232 240 / 0.6) 1px, transparent 1px),
+        linear-gradient(to bottom, rgb(226 232 240 / 0.6) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+  <!-- Top bar -->
+  <header class="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
+    <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
+      <div class="flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-lg font-bold text-white shadow-lift">明</div>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-brand-600">Concept mock</p>
+          <h1 class="text-sm font-bold text-ink sm:text-base">オーナー明細 · Dropbox連携 · メール下書き</h1>
+        </div>
+      </div>
+      <nav class="flex flex-wrap items-center gap-1 text-xs sm:text-sm">
+        <a href="#overview" class="rounded-lg px-2 py-1.5 text-slate-600 hover:bg-slate-100 hover:text-brand-700">概要</a>
+        <a href="#flow" class="rounded-lg px-2 py-1.5 text-slate-600 hover:bg-slate-100 hover:text-brand-700">データの流れ</a>
+        <a href="#ui" class="rounded-lg px-2 py-1.5 text-slate-600 hover:bg-slate-100 hover:text-brand-700">メインUI</a>
+        <a href="#schedule" class="rounded-lg px-2 py-1.5 text-slate-600 hover:bg-slate-100 hover:text-brand-700">運用</a>
+        <a href="#dropbox" class="rounded-lg px-2 py-1.5 text-slate-600 hover:bg-slate-100 hover:text-brand-700">Dropbox</a>
+        <a href="#pdf" class="rounded-lg px-2 py-1.5 text-slate-600 hover:bg-slate-100 hover:text-brand-700">PDF</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:py-14">
+    <!-- Hero -->
+    <section id="overview" class="mb-16 scroll-mt-24">
+      <div class="grid gap-8 lg:grid-cols-12 lg:items-center">
+        <div class="lg:col-span-7">
+          <p class="mb-2 inline-flex items-center gap-2 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700 ring-1 ring-brand-100">
+            <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+            民泊運営会社向け · 20オーナー規模を想定
+          </p>
+          <h2 class="mb-4 text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">
+            <span class="bg-gradient-to-r from-sky-600 to-brand-600 bg-clip-text text-transparent">Dropbox</span>の所定フォルダにPDFが追加されると、
+            同じフォルダにある<strong class="font-extrabold text-ink">Excelは無視</strong>し、
+            <span class="whitespace-nowrap">ファイル名（＝施設コード）</span>で台帳照合して
+            <span class="whitespace-nowrap">メール下書き</span>が<strong class="font-extrabold text-ink">送信ボタンの直前</strong>まで完成
+          </h2>
+          <p class="mb-6 max-w-2xl text-base leading-relaxed text-ink-muted">
+            このHTMLは「完成形ツール」の画面イメージと、裏側の処理の流れを<strong class="font-semibold text-ink">一枚で俯瞰</strong>できる図解です。オーナー特定は<strong class="font-semibold text-ink">PDF本文ではなくファイル名</strong>です。<strong class="font-semibold text-ink">自動送信は行わず</strong>、人が最終確認してから送信する前提です。
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <span class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium shadow-sm">
+              <svg class="h-4 w-4 text-sky-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+              共有フォルダへPDFを保存
+            </span>
+            <span class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium shadow-sm">
+              <svg class="h-4 w-4 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              .pdf のみ処理（.xlsx はスキップ）
+            </span>
+            <span class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium shadow-sm">
+              <svg class="h-4 w-4 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              メール下書き（件名・本文・添付）
+            </span>
+          </div>
+        </div>
+        <div class="relative lg:col-span-5">
+          <div class="absolute -inset-4 rounded-3xl bg-gradient-to-br from-brand-100/80 via-white to-cyan-50 blur-2xl"></div>
+          <div class="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-panel">
+            <p class="mb-4 text-xs font-bold uppercase tracking-wider text-slate-400">今月のサマリー（例：2026年4月）</p>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="rounded-xl bg-slate-50 p-4 ring-1 ring-slate-100">
+                <p class="text-2xl font-extrabold text-ink">20</p>
+                <p class="text-xs text-ink-muted">台帳オーナー</p>
+              </div>
+              <div class="rounded-xl bg-violet-50 p-4 ring-1 ring-violet-100">
+                <p class="text-2xl font-extrabold text-violet-700">16</p>
+                <p class="text-xs text-violet-900/80">下書き作成済</p>
+              </div>
+              <div class="rounded-xl bg-amber-50 p-4 ring-1 ring-amber-100">
+                <p class="text-2xl font-extrabold text-amber-700">3</p>
+                <p class="text-xs text-amber-900/70">照合要確認</p>
+              </div>
+              <div class="rounded-xl bg-emerald-50 p-4 ring-1 ring-emerald-100">
+                <p class="text-2xl font-extrabold text-emerald-700">12</p>
+                <p class="text-xs text-emerald-900/70">人手で送信済</p>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center justify-between rounded-xl bg-slate-900 px-4 py-3 text-white">
+              <div class="min-w-0 pr-2">
+                <p class="text-xs text-slate-400">Dropbox 監視（実フォルダ例）</p>
+                <p class="truncate text-sm font-semibold" title="BlueOcean共有/…/2026 02">…/2026/2026 02/ に .pdf 追加で起動</p>
+              </div>
+              <span class="shrink-0 rounded-lg bg-white/10 px-2 py-1 text-[10px] font-medium uppercase tracking-wide text-slate-300">Webhook</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture flow -->
+    <section id="flow" class="mb-20 scroll-mt-24">
+      <div class="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h3 class="text-2xl font-bold text-ink">データの流れ（全体像）</h3>
+          <p class="mt-1 text-sm text-ink-muted">Dropboxに<strong class="font-semibold text-ink">.pdf</strong>が現れるのをトリガに、<strong class="font-semibold text-ink">ファイル名の施設コード</strong>で台帳照合 → メール下書きまで。Excelは対象外。送信とログは人またはメール側の履歴で管理します。</p>
+        </div>
+        <span class="self-start rounded-lg bg-slate-900 px-3 py-1 text-xs font-medium text-white">読み方: 左から右へ</span>
+      </div>
+
+      <div class="grid-flow-lines relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-panel sm:p-8">
+        <div class="grid gap-4 md:grid-cols-6 md:gap-0">
+          <div class="relative rounded-xl border border-sky-200 bg-sky-50/80 p-4 md:col-span-1">
+            <span class="mb-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-sky-600 text-xs font-bold text-white">1</span>
+            <p class="text-sm font-bold text-ink">Dropbox</p>
+            <p class="mt-1 text-xs leading-relaxed text-ink-muted">会計用の共有パスに PDF / xlsx が並ぶ（例: <code class="rounded bg-white/80 px-0.5 text-[10px]">2026 02</code> フォルダ）</p>
+          </div>
+          <div class="hidden items-center justify-center md:flex">
+            <svg class="h-6 w-6 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
+          <div class="relative rounded-xl border border-slate-200 bg-white p-4 md:col-span-1">
+            <span class="mb-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-900 text-xs font-bold text-white">2</span>
+            <p class="text-sm font-bold text-ink">検知</p>
+            <p class="mt-1 text-xs leading-relaxed text-ink-muted">Webhook または同期ポーリングで新規ファイルを取得</p>
+          </div>
+          <div class="hidden items-center justify-center md:flex">
+            <svg class="h-6 w-6 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
+          <div class="relative rounded-xl border border-slate-200 bg-white p-4 md:col-span-1">
+            <span class="mb-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white">3</span>
+            <p class="text-sm font-bold text-ink">PDFだけ拾う</p>
+            <p class="mt-1 text-xs leading-relaxed text-ink-muted">拡張子が <code class="text-[10px]">.pdf</code> のみ。xlsx は無視</p>
+          </div>
+          <div class="hidden items-center justify-center md:flex">
+            <svg class="h-6 w-6 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+
+        <div class="my-6 hidden h-px w-full bg-gradient-to-r from-transparent via-slate-200 to-transparent md:block"></div>
+
+        <div class="grid gap-4 md:grid-cols-6 md:gap-0">
+          <div class="relative rounded-xl border border-slate-200 bg-white p-4 md:col-span-1 md:col-start-1">
+            <span class="mb-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white">4</span>
+            <p class="text-sm font-bold text-ink">ファイル名解析</p>
+            <p class="mt-1 text-xs leading-relaxed text-ink-muted">例: <code class="text-[10px]">3B202602.pdf</code> → 施設 <code class="text-[10px]">3B</code> · 対象月 <code class="text-[10px]">2026-02</code></p>
+          </div>
+          <div class="hidden items-center justify-center md:flex">
+            <svg class="h-6 w-6 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
+          <div class="relative rounded-xl border border-violet-100 bg-violet-50/80 p-4 md:col-span-1">
+            <span class="mb-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-violet-700 text-xs font-bold text-white">5</span>
+            <p class="text-sm font-bold text-ink">台帳照合 → 下書き</p>
+            <p class="mt-1 text-xs leading-relaxed text-violet-900/80">施設コード → オーナー・メール。Gmail ドラフト（添付は該当PDF）</p>
+          </div>
+          <div class="hidden items-center justify-center md:flex">
+            <svg class="h-6 w-6 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
+          <div class="relative rounded-xl border border-amber-100 bg-amber-50/80 p-4 md:col-span-2">
+            <span class="mb-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-amber-500 text-xs font-bold text-white">人</span>
+            <p class="text-sm font-bold text-ink">送信はここまで止める</p>
+            <p class="mt-1 text-xs leading-relaxed text-amber-900/90">Gmailの「送信」は担当者が押す。誤配・添付ミスを最終確認。</p>
+          </div>
+        </div>
+
+        <div class="mt-8 rounded-xl border border-dashed border-brand-200 bg-brand-50/50 p-4">
+          <p class="text-xs font-semibold text-brand-800">補足（実装で決めるポイント）</p>
+          <ul class="mt-2 grid gap-2 text-xs text-brand-900/80 sm:grid-cols-3">
+            <li class="flex gap-2"><span class="text-brand-500">▸</span>同一施設・同月のPDFが再アップロードされたときの扱い</li>
+            <li class="flex gap-2"><span class="text-brand-500">▸</span>台帳にない施設コード →「要確認」＋通知</li>
+            <li class="flex gap-2"><span class="text-brand-500">▸</span>下書き済みの重複防止（Dropbox rev / content hash）</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main UI mock -->
+    <section id="ui" class="mb-20 scroll-mt-24">
+      <h3 class="mb-2 text-2xl font-bold text-ink">メインコンソール（ダッシュボード）</h3>
+      <p class="mb-8 max-w-3xl text-sm text-ink-muted">左：ナビゲーション。中央：監視フォルダ・<strong class="font-semibold text-ink">施設コード（ファイル名）</strong>ごとのステータス。右：Gmailの<strong class="font-semibold text-ink">下書き</strong>プレビュー（送信ボタン手前まで）。</p>
+
+      <div class="overflow-hidden rounded-2xl border border-slate-300 bg-slate-200 shadow-2xl ring-1 ring-black/5">
+        <!-- Window chrome -->
+        <div class="flex items-center gap-2 border-b border-slate-300 bg-slate-100 px-4 py-2">
+          <span class="h-3 w-3 rounded-full bg-red-400"></span>
+          <span class="h-3 w-3 rounded-full bg-amber-400"></span>
+          <span class="h-3 w-3 rounded-full bg-emerald-400"></span>
+          <span class="ml-3 flex-1 truncate rounded-md bg-white px-3 py-1 text-center text-[11px] text-slate-500 ring-1 ring-slate-200">https://console.example.jp/statements/2026-04</span>
+        </div>
+
+        <div class="flex min-h-[560px] flex-col lg:flex-row">
+          <!-- Sidebar -->
+          <aside class="flex w-full flex-row gap-2 overflow-x-auto border-b border-slate-200 bg-slate-900 p-3 lg:w-52 lg:flex-col lg:border-b-0 lg:border-r">
+            <p class="hidden px-2 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500 lg:block">Menu</p>
+            <a href="#" class="whitespace-nowrap rounded-lg bg-white/10 px-3 py-2 text-xs font-semibold text-white ring-1 ring-white/20">ステータス</a>
+            <a href="#" class="whitespace-nowrap rounded-lg px-3 py-2 text-xs text-slate-300 hover:bg-white/5">オーナー台帳</a>
+            <a href="#" class="whitespace-nowrap rounded-lg px-3 py-2 text-xs text-slate-300 hover:bg-white/5">施設マスタ</a>
+            <a href="#" class="whitespace-nowrap rounded-lg px-3 py-2 text-xs text-slate-300 hover:bg-white/5">テンプレ</a>
+            <a href="#" class="whitespace-nowrap rounded-lg px-3 py-2 text-xs text-slate-300 hover:bg-white/5">Dropbox連携</a>
+            <a href="#" class="whitespace-nowrap rounded-lg px-3 py-2 text-xs text-slate-300 hover:bg-white/5">処理ログ</a>
+            <div class="mt-auto hidden lg:block">
+              <div class="rounded-lg bg-slate-800 p-3 text-[10px] text-slate-400">
+                <p class="font-semibold text-slate-200">BlueOcean</p>
+                <p class="mt-1 leading-relaxed">ログイン中: 桑原</p>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Center: owner board -->
+          <div class="flex-1 bg-slate-50 p-4 lg:p-5">
+            <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p class="text-xs font-semibold text-brand-600">対象月</p>
+                <h4 class="text-lg font-bold text-ink">2026年2月分 明細レポート</h4>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <button type="button" class="rounded-lg bg-sky-600 px-3 py-2 text-xs font-semibold text-white shadow hover:bg-sky-700">Dropboxと再同期</button>
+                <button type="button" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">未処理のみ再実行</button>
+                <button type="button" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50">台帳CSV</button>
+              </div>
+            </div>
+
+            <div class="mb-3 flex flex-wrap items-center gap-2 text-xs">
+              <span class="rounded-md bg-white px-2 py-1 font-medium text-slate-600 ring-1 ring-slate-200">フィルタ: 全員</span>
+              <span class="rounded-md bg-violet-50 px-2 py-1 font-medium text-violet-800 ring-1 ring-violet-100">下書き済</span>
+              <span class="rounded-md bg-amber-50 px-2 py-1 font-medium text-amber-900 ring-1 ring-amber-100">照合要確認</span>
+              <span class="rounded-md bg-slate-100 px-2 py-1 text-slate-500 ring-1 ring-slate-200">検索…</span>
+            </div>
+
+            <div class="mb-4 flex flex-col gap-3 rounded-xl border border-sky-200 bg-gradient-to-r from-sky-50 to-white p-4 sm:flex-row sm:items-center">
+              <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-sky-500 text-white shadow">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+              </div>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-bold text-sky-900">監視フォルダ（実パスに近い例）</p>
+                <p class="font-mono text-[10px] leading-snug text-sky-900 sm:text-[11px]">BlueOcean共有 / 0.会計 / 00【明細書】 / … / 2026 / <strong>2026 02</strong></p>
+                <p class="mt-1 text-[10px] text-sky-700/80">この中の <strong class="font-semibold">.pdf</strong> だけがトリガー。同名の <strong class="font-semibold">.xlsx</strong> はスキップ。<strong class="font-semibold">ファイル名＝施設名（コード）</strong>でオーナーを引きます。</p>
+              </div>
+              <span class="shrink-0 self-start rounded-lg bg-white px-2 py-1 text-[10px] font-semibold text-sky-700 ring-1 ring-sky-200">トリガー</span>
+            </div>
+
+            <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+              <table class="min-w-full text-left text-xs">
+                <thead class="bg-slate-100 text-[10px] font-bold uppercase tracking-wide text-slate-500">
+                  <tr>
+                    <th class="px-3 py-2">施設（ファイル名）</th>
+                    <th class="px-3 py-2">オーナー</th>
+                    <th class="px-3 py-2">PDFパス</th>
+                    <th class="px-3 py-2">下書き</th>
+                    <th class="px-3 py-2">送信</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-slate-700">
+                  <tr class="bg-brand-50/50">
+                    <td class="px-3 py-2 font-mono text-[11px] font-semibold text-brand-900">3B202602.pdf</td>
+                    <td class="px-3 py-2 font-semibold text-slate-800">喜屋武 様</td>
+                    <td class="px-3 py-2 max-w-[160px] truncate text-slate-500" title="…/2026 02/3B202602.pdf">…/2026 02/3B202602.pdf</td>
+                    <td class="px-3 py-2"><span class="rounded bg-violet-100 px-1.5 py-0.5 text-[10px] font-bold text-violet-800">作成済</span></td>
+                    <td class="px-3 py-2"><span class="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-600">未送信</span></td>
+                  </tr>
+                  <tr>
+                    <td class="px-3 py-2 font-mono text-[11px] font-medium">2B202602.pdf</td>
+                    <td class="px-3 py-2 font-medium">比嘉 様</td>
+                    <td class="px-3 py-2 max-w-[160px] truncate text-slate-500">…/2026 02/2B202602.pdf</td>
+                    <td class="px-3 py-2"><span class="rounded bg-violet-100 px-1.5 py-0.5 text-[10px] font-bold text-violet-800">作成済</span></td>
+                    <td class="px-3 py-2"><span class="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-800">送信済</span></td>
+                  </tr>
+                  <tr>
+                    <td class="px-3 py-2 font-mono text-[11px] font-medium text-amber-800">9Z202602.pdf</td>
+                    <td class="px-3 py-2 text-amber-800">台帳に無し</td>
+                    <td class="px-3 py-2 max-w-[160px] truncate text-slate-500">…/2026 02/9Z202602.pdf</td>
+                    <td class="px-3 py-2"><span class="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold text-amber-900">未作成</span></td>
+                    <td class="px-3 py-2 text-slate-400">—</td>
+                  </tr>
+                  <tr>
+                    <td class="px-3 py-2 font-medium">その他 17名</td>
+                    <td class="px-3 py-2 text-slate-400">—</td>
+                    <td class="px-3 py-2 text-slate-400">—</td>
+                    <td class="px-3 py-2 text-slate-400">—</td>
+                    <td class="px-3 py-2 text-slate-400">—</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="mt-4 flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3">
+              <div class="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
+                <div class="h-full w-[90%] rounded-full bg-gradient-to-r from-brand-500 to-emerald-500"></div>
+              </div>
+              <p class="text-[11px] font-medium text-slate-600">下書き作成 <strong class="text-ink">16/20</strong> · 人手送信 <strong class="text-ink">12/20</strong></p>
+            </div>
+          </div>
+
+          <!-- Right: preview -->
+          <div class="w-full border-t border-slate-200 bg-white p-4 lg:w-[400px] lg:border-l lg:border-t-0">
+            <p class="mb-3 text-xs font-bold text-slate-400">Gmail 下書き · 施設 3B → 喜屋武 様（選択中）</p>
+
+            <div class="rounded-xl border border-slate-200 bg-slate-50 p-3 shadow-inner">
+              <div class="mb-2 flex flex-wrap items-center justify-between gap-2">
+                <span class="text-[10px] font-bold uppercase text-slate-400">Compose</span>
+                <span class="rounded-full bg-amber-100 px-2 py-0.5 text-[9px] font-bold text-amber-900 ring-1 ring-amber-200">自動作成 · 未送信</span>
+              </div>
+              <p class="text-[10px] text-slate-500">宛先（台帳）</p>
+              <p class="text-[11px] font-semibold text-ink">kiyabu-owner@example.com</p>
+              <p class="mt-2 text-[11px] font-semibold text-ink">件名: 2月明細</p>
+              <p class="mt-2 text-[10px] leading-relaxed text-slate-600">
+                喜屋武様<br><br>
+                お世話になります。<br>
+                2月の明細レポートを共有いたします。<br>
+                明日振り込み予定になります。<br>
+                よろしくお願いいたします。<br><br>
+                桑原
+              </p>
+              <div class="mt-3 flex items-center gap-2 rounded-lg border border-dashed border-slate-300 bg-white px-2 py-2">
+                <span class="flex h-8 w-8 items-center justify-center rounded bg-red-50 text-lg">📄</span>
+                <div class="min-w-0 flex-1">
+                  <p class="truncate font-mono text-[10px] font-semibold text-ink">3B202602.pdf（Dropboxと同一）</p>
+                  <p class="text-[9px] text-slate-400">ツールがダウンロードしてドラフトに添付した想定</p>
+                </div>
+              </div>
+
+              <div class="mt-4 rounded-lg border-2 border-dashed border-amber-300 bg-amber-50/80 p-3">
+                <p class="mb-2 text-center text-[10px] font-bold text-amber-900">ここが「完成ライン」</p>
+                <div class="flex flex-col gap-2 sm:flex-row sm:justify-end">
+                  <button type="button" disabled class="cursor-not-allowed rounded-lg bg-slate-200 px-4 py-2 text-xs font-bold text-slate-400">送信</button>
+                  <button type="button" class="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50">捨てて手入力</button>
+                </div>
+                <p class="mt-2 text-center text-[9px] leading-relaxed text-amber-900/80">実運用では担当者がGmailを開き、内容を確認してから青い<strong class="font-semibold">送信</strong>を押します。このモックではボタンを無効化しています。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Schedule -->
+    <section id="schedule" class="mb-20 scroll-mt-24">
+      <h3 class="mb-2 text-2xl font-bold text-ink">運用カレンダー（毎月7日）× トリガーは「ファイル追加」</h3>
+      <p class="mb-8 max-w-3xl text-sm text-ink-muted">締め作業のリズムは従来どおり<strong class="font-semibold text-ink">毎月7日</strong>などカレンダーで固定しつつ、システムの起動条件は<strong class="font-semibold text-ink">Dropboxに .pdf が置かれた事実</strong>にします（同じフォルダの .xlsx は触らない）。メールの送信そのものは人が行います。</p>
+
+      <div class="grid gap-6 lg:grid-cols-2">
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-panel">
+          <p class="mb-4 text-sm font-bold text-ink">月次カレンダー（運用イメージ）</p>
+          <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-semibold text-slate-400">
+            <span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span>
+          </div>
+          <div class="mt-2 grid grid-cols-7 gap-1 text-center text-xs">
+            <!-- week 1 -->
+            <span class="rounded-lg py-2 text-slate-300">30</span>
+            <span class="rounded-lg py-2 text-slate-300">31</span>
+            <span class="rounded-lg py-2">1</span>
+            <span class="rounded-lg py-2">2</span>
+            <span class="rounded-lg py-2">3</span>
+            <span class="rounded-lg py-2">4</span>
+            <span class="rounded-lg py-2">5</span>
+            <!-- week 2 -->
+            <span class="rounded-lg py-2">6</span>
+            <span class="relative rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 py-2 font-bold text-white shadow-lift ring-2 ring-brand-200">7
+              <span class="absolute -bottom-5 left-1/2 hidden w-max -translate-x-1/2 rounded bg-slate-900 px-1.5 py-0.5 text-[9px] font-normal text-white sm:block">PDFをDropboxへ</span>
+            </span>
+            <span class="rounded-lg py-2">8</span>
+            <span class="rounded-lg py-2">9</span>
+            <span class="rounded-lg py-2">10</span>
+            <span class="rounded-lg py-2">11</span>
+            <span class="rounded-lg py-2">12</span>
+          </div>
+          <p class="mt-8 text-xs leading-relaxed text-ink-muted sm:mt-6">
+            会計・明細PDFの作成は既存フローのままでも構いません。<strong class="text-ink">完成したPDFを7日までに所定フォルダへ入れる</strong>ところが運用のガードレールです。遅れたファイルは到着順に処理し、台帳と突き合わせて下書きが増えていきます。
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-panel">
+          <p class="mb-4 text-sm font-bold text-ink">タイムライン（1ファイル追加あたり）</p>
+          <ol class="relative border-l border-slate-200 pl-6">
+            <li class="mb-6">
+              <span class="absolute -left-1.5 top-1.5 h-3 w-3 rounded-full border-2 border-white bg-sky-500"></span>
+              <p class="text-xs font-bold text-ink">T+0秒 — Dropbox通知</p>
+              <p class="mt-1 text-xs text-ink-muted">ファイルパス・revision を受け取りキューへ。</p>
+            </li>
+            <li class="mb-6">
+              <span class="absolute -left-1.5 top-1.5 h-3 w-3 rounded-full border-2 border-white bg-brand-500"></span>
+              <p class="text-xs font-bold text-ink">T+数秒 — フィルタ＆ファイル名パース</p>
+              <p class="mt-1 text-xs text-ink-muted"><code class="rounded bg-slate-100 px-0.5 text-[10px]">.pdf</code> のみ処理。ファイル名から施設コード（例: <code class="text-[10px]">3B</code>）と年月（<code class="text-[10px]">202602</code>）を取り出す。</p>
+            </li>
+            <li class="mb-6">
+              <span class="absolute -left-1.5 top-1.5 h-3 w-3 rounded-full border-2 border-white bg-brand-500"></span>
+              <p class="text-xs font-bold text-ink">台帳照合 · テンプレ展開</p>
+              <p class="mt-1 text-xs text-ink-muted">施設コードでオーナー・To を決定。件名・本文に対象月などを差し込む。</p>
+            </li>
+            <li>
+              <span class="absolute -left-1.5 top-1.5 h-3 w-3 rounded-full border-2 border-white bg-violet-500"></span>
+              <p class="text-xs font-bold text-ink">Gmail 下書き作成</p>
+              <p class="mt-1 text-xs text-ink-muted">PDFを添付した状態で保存。<strong class="font-semibold text-ink">送信APIは呼ばない</strong>。</p>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dropbox -->
+    <section id="dropbox" class="mb-20 scroll-mt-24">
+      <h3 class="mb-2 text-2xl font-bold text-ink">Dropbox 連携の設計ポイント</h3>
+      <p class="mb-8 max-w-3xl text-sm text-ink-muted">フォルダ構成と権限を先に決めると、実装（Dropbox API / Webhook）の見積もりが安定します。</p>
+
+      <div class="grid gap-6 md:grid-cols-2">
+        <div class="rounded-2xl border border-sky-200 bg-gradient-to-b from-sky-50 to-white p-6 shadow-panel">
+          <div class="mb-4 flex items-center gap-2">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-600 text-white">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-bold text-ink">フォルダ設計</p>
+              <p class="text-xs text-sky-900/70">月次でパスを分けると一覧性が高い</p>
+            </div>
+          </div>
+          <ul class="space-y-1.5 font-mono text-[10px] leading-relaxed text-sky-950/90 sm:text-[11px]">
+            <li><span class="text-sky-500">BlueOcean共有</span> / 0.会計 / 00【明細書】</li>
+            <li>/ 2023-08以降 / ！明細書作成準備用データ</li>
+            <li>/ <span class="text-sky-700">2026</span> / <strong class="text-sky-800">2026 02</strong> <span class="text-sky-600">← 月フォルダ例（ここを監視）</span></li>
+          </ul>
+          <p class="mt-3 rounded-lg bg-white/70 p-2 text-[10px] leading-relaxed text-sky-900 ring-1 ring-sky-100"><strong class="font-semibold">ファイル名規約（例）</strong><br><code class="font-mono text-[10px]">3B202602.pdf</code> ＝ 施設 <code class="font-mono">3B</code> ＋ <code class="font-mono">202602</code>（2026年2月）。Excelの <code class="font-mono">3B202602.xlsx</code> は<strong class="font-semibold">無視</strong>。</p>
+          <p class="mt-3 text-xs text-ink-muted">処理済み移動は任意。まずはログ＋DBで状態管理でも十分です。</p>
+        </div>
+
+        <div class="rounded-2xl border border-violet-200 bg-gradient-to-b from-violet-50 to-white p-6 shadow-panel">
+          <div class="mb-4 flex items-center gap-2">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-600 text-white">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-bold text-ink">メールは「下書きまで」</p>
+              <p class="text-xs text-violet-900/70">Gmail API users.drafts.create 等</p>
+            </div>
+          </div>
+          <ul class="space-y-2 text-xs text-ink-muted">
+            <li class="flex gap-2"><span class="font-bold text-violet-600">✓</span> 誤送信リスクを構造的に下げられる</li>
+            <li class="flex gap-2"><span class="font-bold text-violet-600">✓</span> 担当者がGmail上で最終編集しやすい</li>
+            <li class="flex gap-2"><span class="font-bold text-amber-600">!</span> OAuth・スコープ管理（組織のGoogle Workspace方針）</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- PDF preview -->
+    <section id="pdf" class="mb-16 scroll-mt-24">
+      <h3 class="mb-2 text-2xl font-bold text-ink">PDF明細書プレビュー（表レイアウト）</h3>
+      <p class="mb-8 max-w-3xl text-sm text-ink-muted">明細の中身は会計側のPDFのままです。<strong class="font-semibold text-ink">オーナー宛ての紐づけはファイル名の施設コードのみ</strong>（本文の宛名は台帳の表示名を使用）。以下は送付前の目視確認用プレビューです。</p>
+
+      <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-panel">
+        <div class="min-w-[640px] p-6 sm:p-8">
+          <div class="mb-6 flex flex-col justify-between gap-4 border-b border-slate-200 pb-4 sm:flex-row sm:items-start">
+            <div>
+              <p class="text-lg font-extrabold tracking-tight text-ink">THE HILLTOP GARDEN VILLA</p>
+              <p class="text-sm font-bold text-slate-600">2月分 運営明細書</p>
+            </div>
+            <div class="text-right text-[10px] leading-relaxed text-slate-500">
+              <p class="font-semibold text-slate-700">株式会社 BlueOcean</p>
+              <p>沖縄県…</p>
+              <p>登録番号: T0000…</p>
+            </div>
+          </div>
+          <table class="w-full border-collapse text-left text-[11px]">
+            <thead>
+              <tr class="bg-slate-900 text-white">
+                <th class="px-2 py-2 font-semibold">チェックイン</th>
+                <th class="px-2 py-2 font-semibold">泊数</th>
+                <th class="px-2 py-2 font-semibold">宿泊代金</th>
+                <th class="px-2 py-2 font-semibold">清掃費</th>
+                <th class="px-2 py-2 font-semibold">計</th>
+                <th class="px-2 py-2 font-semibold">備考</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 text-slate-700">
+              <tr class="bg-slate-50/50">
+                <td class="px-2 py-2">2026-02-03</td>
+                <td class="px-2 py-2">2</td>
+                <td class="px-2 py-2 tabular-nums">¥48,000</td>
+                <td class="px-2 py-2 tabular-nums">¥8,000</td>
+                <td class="px-2 py-2 font-semibold tabular-nums">¥56,000</td>
+                <td class="px-2 py-2 text-slate-500">—</td>
+              </tr>
+              <tr>
+                <td class="px-2 py-2">2026-02-14</td>
+                <td class="px-2 py-2">3</td>
+                <td class="px-2 py-2 tabular-nums">¥72,000</td>
+                <td class="px-2 py-2 tabular-nums">¥8,000</td>
+                <td class="px-2 py-2 font-semibold tabular-nums">¥80,000</td>
+                <td class="px-2 py-2 text-slate-500">連泊割引</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr class="bg-brand-50 font-bold text-brand-900">
+                <td class="px-2 py-3" colspan="4">月間合計</td>
+                <td class="px-2 py-3 tabular-nums" colspan="2">¥136,000</td>
+              </tr>
+            </tfoot>
+          </table>
+          <p class="mt-4 text-[10px] text-slate-400">※ 数値はダミーです。どの施設の明細かは <strong class="font-semibold text-slate-600">Dropbox上のファイル名</strong>（例: 3B202602.pdf）で判別します。PDFテキストの解析は不要です。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Settings checklist -->
+    <section class="mb-10 rounded-2xl border border-slate-200 bg-slate-900 p-6 text-slate-200 shadow-panel sm:p-8">
+      <h3 class="mb-2 text-lg font-bold text-white">設定画面に置くとよい項目（チェックリスト）</h3>
+      <p class="mb-6 text-xs text-slate-400">完成イメージの「裏付け」となるマスタデータです。</p>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="rounded-xl bg-white/5 p-4 ring-1 ring-white/10">
+          <p class="text-xs font-bold text-brand-300">施設・オーナーマスタ</p>
+          <ul class="mt-2 space-y-1.5 text-[11px] text-slate-300">
+            <li>· 施設コード（＝ファイル名の頭・施設名）</li>
+            <li>· 紐づくオーナー表示名・敬称</li>
+            <li>· 通知用メールアドレス（To）</li>
+          </ul>
+        </div>
+        <div class="rounded-xl bg-white/5 p-4 ring-1 ring-white/10">
+          <p class="text-xs font-bold text-brand-300">Dropbox 取込</p>
+          <ul class="mt-2 space-y-1.5 text-[11px] text-slate-300">
+            <li>· 監視する月フォルダ（例: 2026 02）</li>
+            <li>· 拡張子 .pdf のみ（.xlsx は無視）</li>
+            <li>· Webhook / ポーリング・重複防止（rev）</li>
+          </ul>
+        </div>
+        <div class="rounded-xl bg-white/5 p-4 ring-1 ring-white/10">
+          <p class="text-xs font-bold text-brand-300">メール・運用</p>
+          <ul class="mt-2 space-y-1.5 text-[11px] text-slate-300">
+            <li>· 件名・本文テンプレ（対象月など）</li>
+            <li>· 下書きのみ（送信APIは使わない）</li>
+            <li>· 毎月7日までの投入など運用SLA</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-200 bg-white py-8 text-center text-xs text-slate-500">
+    <p>静的モックアップ · Tailwind CDN · ブラウザで開くだけで表示されます</p>
+    <p class="mt-1">ファイル: <code class="rounded bg-slate-100 px-1.5 py-0.5 text-slate-700">owner-statement-automation-mockup.html</code></p>
+  </footer>
+</body>
+</html>

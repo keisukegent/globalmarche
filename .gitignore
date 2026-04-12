@@ -1,0 +1,18 @@
+# Python / secrets
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+*.local
+
+# OS / tooling
+.DS_Store
+Thumbs.db
+
+# ローカル用大容量フォルダ（マルシェサイト外）
+グローバル/
+g/
+
+# Nested repo (独自 Git のためルートからは追跡しない)
+creating-visual-explainers/

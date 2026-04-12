@@ -1,0 +1,12 @@
+[
+  {
+    "owner_id": "owner_001",
+    "email": "owner1@example.com",
+    "name": "山田 太郎"
+  },
+  {
+    "owner_id": "owner_002",
+    "email": "owner2@example.com",
+    "name": "佐藤 花子"
+  }
+]
