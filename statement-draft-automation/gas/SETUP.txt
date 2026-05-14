@@ -71,7 +71,7 @@
    任意: DEBUG_LOG_RECORD に 1 … 宿泊施設・予約サイト・部屋のフィールドコードと値を別行で出力し、続けて record 全体も出力（確認後は削除推奨）
 
    初回は gmailToKintone を手動実行して権限を許可後、
-   installHourlyTrigger または installTriggerEveryMinutes(15) で時間トリガーを作成。
+   installHourlyTrigger（15分間隔）または installTriggerEveryMinutes(15) で時間トリガーを作成。
 
 ■ Gmail フィルタ（件名に「新規予約が入りました」→ ラベル「Kintone転送待ち」を自動付与）
 

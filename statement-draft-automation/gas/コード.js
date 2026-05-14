@@ -17,7 +17,7 @@
  *    （任意）FACILITY_OPTION_MAP_JSON / PLATFORM_OPTION_MAP_JSON … メール表記を別文字列に変換したいとき（任意）
  *       DEBUG_LOG_RECORD に 1 … 送信 record を実行ログに出力（宿泊施設・予約サイト・部屋は別行で明示）
  * 2. エディタで gmailToKintone を1回手動実行して権限承認
- * 3. installHourlyTrigger() または installTriggerEveryMinutes(15) でトリガー作成
+ * 3. installHourlyTrigger()（15分間隔）または installTriggerEveryMinutes(15) でトリガー作成
  *
  * Gmail 側: 「新規予約が入りました！！」などの通知にフィルタでラベル「Kintone転送待ち」を付与。
  */
@@ -238,10 +238,9 @@ function gmailToKintone() {
   });
 }
 
-/** 1時間ごと（24回/日）— 均等な間隔でバッチ実行する用途 */
+/** 15分ごと（1日最大96回）。関数名は後方互換のため残す */
 function installHourlyTrigger() {
-  uninstallKintoneTriggers_();
-  ScriptApp.newTrigger('gmailToKintone').timeBased().everyHours(1).create();
+  installTriggerEveryMinutes(15);
 }
 
 /**
