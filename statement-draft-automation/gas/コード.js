@@ -8,7 +8,7 @@
  *    KINTONE_API_TOKEN  APIトークン（コードに書かない）
  *    （任意）GMAIL_LABEL_NAME 既定: Kintone転送待ち
  *    （任意）GMAIL_SUBJECT_CONTAINS 既定: 新規予約が入りました … 件名に含まないスレは処理しない
- *    （任意）MAX_THREAD_AGE_HOURS 例: 24 … 受信からこの時間を超えたスレは処理しない
+ *    （任意）MAX_THREAD_AGE_HOURS 例: 24 … 先頭メールの受信からこの時間を超えたスレは処理しない
  *    （任意）BODY_USE_LAST_MESSAGE に 1 … 本文だけスレッド「最新」の 1 通から取る（既定は「先頭」＝予約通知本体）
  *    （任意）FIELD_LODGING / FIELD_PLATFORM / FIELD_ROOM_NAME … 文字で記載する項目のフィールドコード
  *       既定: lodging2（【必須】宿泊施設2） platform2（【必須】予約サイト2） room_name2（【必須】部屋名2）
@@ -94,6 +94,21 @@ function getFieldCodes_(p) {
   };
 }
 
+/** ラベル付きスレッドをすべて取得（getThreads 無引数は件数上限で取りこぼすことがあるためページング） */
+function getAllLabelThreads_(label) {
+  var out = [];
+  var start = 0;
+  var page = 500;
+  while (true) {
+    var batch = label.getThreads(start, page);
+    if (!batch || batch.length === 0) break;
+    for (var i = 0; i < batch.length; i++) out.push(batch[i]);
+    if (batch.length < page) break;
+    start += page;
+  }
+  return out;
+}
+
 /** メイン: ラベル付きスレッドを kintone に登録（時間トリガーからも呼ぶ） */
 function gmailToKintone() {
   var cfg = getConfig_();
@@ -103,22 +118,24 @@ function gmailToKintone() {
     return;
   }
 
-  var threads = label.getThreads();
+  var threads = getAllLabelThreads_(label);
+  console.log('Kintone転送待ちスレッド数: ' + threads.length);
   threads.forEach(function (thread) {
     try {
-      if (cfg.maxAgeMs) {
-        var lastDate = thread.getLastMessageDate();
-        if (lastDate && Date.now() - lastDate.getTime() > cfg.maxAgeMs) {
-          console.log('スキップ（経過時間）: ' + thread.getId());
-          return;
-        }
-      }
-
       var messages = thread.getMessages();
       if (!messages.length) {
         console.log('スキップ（スレッドにメッセージがありません）');
         return;
       }
+
+      if (cfg.maxAgeMs) {
+        var recv = messages[0].getDate();
+        if (recv && Date.now() - recv.getTime() > cfg.maxAgeMs) {
+          console.log('スキップ（経過時間・先頭メール受信基準）: ' + thread.getId());
+          return;
+        }
+      }
+
       var firstSubject = messages[0].getSubject();
       if (!subjectMatchesTarget_(firstSubject, cfg.subjectContains)) {
         console.log('スキップ（件名が対象外）: ' + firstSubject);
