@@ -10,13 +10,12 @@
  *    （任意）GMAIL_SUBJECT_CONTAINS 既定: 新規予約が入りました … 件名に含まないスレは処理しない
  *    （任意）MAX_THREAD_AGE_HOURS 例: 24 … 受信からこの時間を超えたスレは処理しない
  *    （任意）BODY_USE_LAST_MESSAGE に 1 … 本文だけスレッド「最新」の 1 通から取る（既定は「先頭」＝予約通知本体）
- *    （任意）FIELD_LODGING / FIELD_PLATFORM / FIELD_CHECKIN / FIELD_CHECKOUT … kintone のフィールドコード（既定は auto_room 等）
- *    （任意）宿泊施設が「ドロップダウン」のとき:
- *       LODGING_APPEND_ROOM に 0 … 施設フィールドへ「部屋タイプ」を連結しない（プルダウン一致用）
- *       FACILITY_OPTION_MAP_JSON … メールの施設名→プルダウン選択肢と完全一致する文字列の対応（JSON）
- *       PLATFORM_OPTION_MAP_JSON … 予約サイトがドロップダウン時、メール表記→選択肢文字列（JSON）
- *       FIELD_ROOM_NAME … 部屋名を入れる別フィールドのフィールドコード（あれば）
- *       DEBUG_LOG_RECORD に 1 … 送信 record を実行ログに出力（宿泊施設・予約サイトは別行で明示）
+ *    （任意）FIELD_LODGING / FIELD_PLATFORM / FIELD_ROOM_NAME … 文字で記載する項目のフィールドコード
+ *       既定: lodging2（【必須】宿泊施設2） platform2（【必須】予約サイト2） room_name2（【必須】部屋名2）
+ *       kintone「フォーム」で各フィールドの歯車からフィールドコードを確認し、違えばスクリプトプロパティで上書き
+ *    （任意）FIELD_CHECKIN / FIELD_CHECKOUT … 既定 checkin / checkout
+ *    （任意）FACILITY_OPTION_MAP_JSON / PLATFORM_OPTION_MAP_JSON … メール表記を別文字列に変換したいとき（任意）
+ *       DEBUG_LOG_RECORD に 1 … 送信 record を実行ログに出力（宿泊施設・予約サイト・部屋は別行で明示）
  * 2. エディタで gmailToKintone を1回手動実行して権限承認
  * 3. installHourlyTrigger() または installTriggerEveryMinutes(15) でトリガー作成
  *
@@ -49,8 +48,6 @@ function getConfig_() {
     fieldCodes: getFieldCodes_(p),
     facilityMap: parseFacilityMap_(p),
     platformMap: parsePlatformMap_(p),
-    /** false のとき宿泊施設フィールドに部屋タイプを付けない（ドロップダウン向け） */
-    lodgingAppendRoom: p.getProperty('LODGING_APPEND_ROOM') !== '0',
     debugLogRecord: p.getProperty('DEBUG_LOG_RECORD') === '1',
     /** true のときだけ本文を最新メールから（既定 false＝先頭＝予約本文と金額が一致しやすい） */
     useLastMessageBody: p.getProperty('BODY_USE_LAST_MESSAGE') === '1',
@@ -69,21 +66,21 @@ function parseJsonMapProperty_(p, propKey) {
   }
 }
 
-/** FACILITY_OPTION_MAP_JSON: {"メールの施設表記":"プルダウンと同じ文字列"} */
+/** FACILITY_OPTION_MAP_JSON: {"メール表記":"送りたい文字列"}（任意） */
 function parseFacilityMap_(p) {
   return parseJsonMapProperty_(p, 'FACILITY_OPTION_MAP_JSON');
 }
 
-/** PLATFORM_OPTION_MAP_JSON: {"Airbnb":"一覧の予約サイト文字列"} */
+/** PLATFORM_OPTION_MAP_JSON: {"メール表記":"送りたい文字列"}（任意） */
 function parsePlatformMap_(p) {
   return parseJsonMapProperty_(p, 'PLATFORM_OPTION_MAP_JSON');
 }
 
-/** kintone アプリのフィールドコード（アプリの「フォーム」設定と一致させる） */
+/** kintone のフィールドコード（フォーム設定と一致させる） */
 function getFieldCodes_(p) {
   return {
-    lodging: p.getProperty('FIELD_LODGING') || 'auto_room',
-    platform: p.getProperty('FIELD_PLATFORM') || 'auto_platform',
+    lodging: p.getProperty('FIELD_LODGING') || 'lodging2',
+    platform: p.getProperty('FIELD_PLATFORM') || 'platform2',
     checkin: p.getProperty('FIELD_CHECKIN') || 'checkin',
     checkout: p.getProperty('FIELD_CHECKOUT') || 'checkout',
     guest_name: p.getProperty('FIELD_GUEST_NAME') || 'guest_name',
@@ -93,7 +90,7 @@ function getFieldCodes_(p) {
     price: p.getProperty('FIELD_PRICE') || 'price',
     reservation_number: p.getProperty('FIELD_RESERVATION_NUMBER') || 'reservation_number',
     beds24_link: p.getProperty('FIELD_BEDS24_LINK') || 'beds24_link',
-    room_name: p.getProperty('FIELD_ROOM_NAME') || '',
+    room_name: p.getProperty('FIELD_ROOM_NAME') || 'room_name2',
   };
 }
 
@@ -171,15 +168,14 @@ function gmailToKintone() {
       var checkin = ext.checkin;
       var checkout = ext.checkout;
 
-      var lodgingCombined = buildLodgingValue_(prop, room, cfg);
-      var platformForApi = applyOptionMap_(String(platform || '').trim(), cfg.platformMap);
+      var lodgingText = applyOptionMap_(String(prop || '').trim(), cfg.facilityMap);
+      var platformText = applyOptionMap_(String(platform || '').trim(), cfg.platformMap);
+      var roomText = String(room || '').trim();
 
       var record = {};
-      record[fc.lodging] = { value: lodgingCombined };
-      if (fc.room_name) {
-        record[fc.room_name] = { value: String(room || '').trim() };
-      }
-      record[fc.platform] = { value: platformForApi };
+      record[fc.lodging] = { value: lodgingText };
+      record[fc.platform] = { value: platformText };
+      record[fc.room_name] = { value: roomText };
       record[fc.guest_name] = {
         value:
           ext.guestName ||
@@ -205,8 +201,9 @@ function gmailToKintone() {
       if (checkin) record[fc.checkin] = { value: checkin };
       if (checkout) record[fc.checkout] = { value: checkout };
 
-      if (!lodgingCombined) console.log('警告: 宿泊施設（マッピング後も空）…本文または FACILITY_OPTION_MAP_JSON を確認');
-      if (!platformForApi) console.log('警告: 予約サイト（マッピング後も空）…本文または PLATFORM_OPTION_MAP_JSON を確認');
+      if (!lodgingText) console.log('警告: 宿泊施設が本文から取れませんでした');
+      if (!platformText) console.log('警告: 予約サイトが本文から取れませんでした');
+      if (!roomText) console.log('警告: 部屋タイプが本文から取れませんでした');
       if (!checkin) console.log('警告: チェックイン日が本文から取れませんでした');
       if (!checkout) console.log('警告: チェックアウト日が本文から取れませんでした');
 
@@ -282,23 +279,6 @@ function listKintoneTriggers() {
   });
 }
 
-/** ドロップダウン用: 施設名マッピング後、必要なら部屋を連結 */
-function buildLodgingValue_(prop, room, cfg) {
-  var rawProp = String(prop || '').trim();
-  var mapped = applyOptionMap_(rawProp, cfg.facilityMap);
-  if (!cfg.lodgingAppendRoom) {
-    return mapped;
-  }
-  var parts = [];
-  if (mapped) parts.push(mapped);
-  var r = String(room || '').trim();
-  if (r) parts.push(r);
-  return parts.join(' / ');
-}
-
-/**
- * メール側の表記を、kintone ドロップダウンの選択肢文字列へ変換（*_OPTION_MAP_JSON）
- */
 function applyOptionMap_(raw, map) {
   if (!raw) return '';
   if (!map || typeof map !== 'object') return raw;

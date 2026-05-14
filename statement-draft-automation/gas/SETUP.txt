@@ -58,41 +58,31 @@
          省略時は「先頭」＝予約通知の本文（返信で金額がずれるのを防ぐ）
 
    任意: kintone の「フィールドコード」と既定が違うときだけ設定
-     FIELD_LODGING（既定 auto_room） FIELD_PLATFORM（既定 auto_platform）
+     FIELD_LODGING（既定 lodging2 …【必須】宿泊施設2）
+     FIELD_PLATFORM（既定 platform2 …【必須】予約サイト2）
+     FIELD_ROOM_NAME（既定 room_name2 …【必須】部屋名2）
      FIELD_CHECKIN（既定 checkin） FIELD_CHECKOUT（既定 checkout）
      ほか guest_name / commission 等も同様に FIELD_* で上書き可（コード.js 内 getFieldCodes_ 参照）
 
-   宿泊施設が「ドロップダウン」のとき（API には一覧の選択肢と完全一致する文字列が必要）:
-     LODGING_APPEND_ROOM に 0 … 「施設名 / 部屋」の連結をやめる（施設だけを FIELD_LODGING に送る）
-     FIELD_ROOM_NAME … 部屋タイプを入れる別フィールドのフィールドコード（フォームにあれば）
-     FACILITY_OPTION_MAP_JSON … 例:
-       {"Hilltop Garden Villa CAN":"プルダウンに表示されている施設名と同じ文字列"}
-       メールの表記とプルダウンの表記が違うときに必須
+   メールからは「宿泊施設」「予約サイト」「部屋タイプ」をそれぞれ別の文字列フィールドへ送る（連結しない）。
 
-   予約サイトが「ドロップダウン」のときも同様に、一覧と完全一致する文字列が必要:
-     PLATFORM_OPTION_MAP_JSON … 例:
-       {"Airbnb":"Airbnb"}
-       メールに「Airbnb」、一覧が別表記のときにキー→値で対応付ける
+   任意: FACILITY_OPTION_MAP_JSON / PLATFORM_OPTION_MAP_JSON … メール表記を別の文字列に変換したいとき
 
-   任意: DEBUG_LOG_RECORD に 1 … 宿泊施設・予約サイトのフィールドコードと値を別行で出力し、続けて record 全体も出力（確認後は削除推奨）
+   任意: DEBUG_LOG_RECORD に 1 … 宿泊施設・予約サイト・部屋のフィールドコードと値を別行で出力し、続けて record 全体も出力（確認後は削除推奨）
 
    初回は gmailToKintone を手動実行して権限を許可後、
    installHourlyTrigger または installTriggerEveryMinutes(15) で時間トリガーを作成。
 
 ■ うまく入らないとき（確認順）
 
-   1. DEBUG_LOG_RECORD=1 で実行し、ログの DEBUG lodging / DEBUG platform の value を見る
-      → 空ならメールから未取得かフィールドコード不一致。値があるのに画面が空ならプルダウン完全一致か。
+   1. DEBUG_LOG_RECORD=1 で実行し、ログの DEBUG lodging / DEBUG platform / DEBUG room の value を見る
 
-   2. kintone のフォームで「宿泊施設」「予約サイト」のフィールドコードが
-      FIELD_LODGING / FIELD_PLATFORM（既定 auto_room / auto_platform）と一致するか
+   2. kintone のフォームで「宿泊施設2」「予約サイト2」「部屋名2」のフィールドコードが
+      lodging2 / platform2 / room_name2 と一致するか（違う場合は FIELD_* で上書き）
 
-   3. プルダウンのとき … メールの表記と一覧の表記が一字一句同じか。
-      違う場合は FACILITY_OPTION_MAP_JSON / PLATFORM_OPTION_MAP_JSON
+   3. 値がログにあるのに画面が空 … 別のフィールドを見ていないか、フィールドコードの打ち間違いを確認
 
-   4. LODGING_APPEND_ROOM=0 … 施設名だけを送る（「施設 / 部屋」はドロップダウンと相性が悪い）
-
-   5. 金額がずれるとき … BODY_USE_LAST_MESSAGE は通常オフ（先頭メール＝予約本文）。
+   4. 金額がずれるとき … BODY_USE_LAST_MESSAGE は通常オフ（先頭メール＝予約本文）。
       返信後の最新だけ読みたいときだけ 1
 
 
